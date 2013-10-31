@@ -11,7 +11,7 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 			for (var i = 0; i < len; ++i) {
 				item = itemList[i];
 
-				list.append("<li><a onclick=GetItem(" + item.id + ")>" + "<img src='../" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
+				list.append("<li><a onclick=GetItem(" + item.id + ")>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
 			}
 			list.listview("refresh");
 		},
@@ -31,7 +31,7 @@ $(document).on('pagebeforeshow', "#details", function(event, ui) {
 
 	var detailsImg = $("#details-image");
 	detailsImg.empty();
-	detailsImg.append("<img src='../" + currentItem.img + "'>");
+	detailsImg.append("<img src='../image/" + currentItem.img + "'>");
 
 	var detailsPara = $("#detailsPara");
 	detailsPara.empty();
@@ -39,19 +39,23 @@ $(document).on('pagebeforeshow', "#details", function(event, ui) {
 
 	var detailsPrice = $("#detailsPrice");
 	detailsPrice.empty();
-	detailsPrice.append(currentItem.price);
+	detailsPrice.append(""+currentItem.price);
+	
+	var detailsBid = $("#detailsBid");
+	detailsBid.empty();
+	detailsBid.append(""+currentItem.bid);
 
 	var detailsShipFrom = $("#detailsShipFrom");
 	detailsShipFrom.empty();
-	detailsShipFrom.append(currentItem.shipFrom);
+	detailsShipFrom.append(""+currentItem.shipFrom);
 
 	var detailsShipTo = $("#detailsShipTo");
 	detailsShipTo.empty();
-	detailsShipTo.append(currentItem.shipTo);
+	detailsShipTo.append(""+currentItem.shipTo);
 
 	var detailsCondition = $("#detailsCondition");
 	detailsCondition.empty();
-	detailsCondition.append(currentItem.condition);
+	detailsCondition.append(""+currentItem.condition);
 });
 
 $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
@@ -63,7 +67,7 @@ $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
 
 	var prodBidInfo = $("#imgSpace");
 	prodBidInfo.empty();
-	prodBidInfo.append("<img src= '../" + currentItem.img + "' height='30' width='30'>");
+	prodBidInfo.append("<img src= '../image/" + currentItem.img + "' height='62' width='62'>");
 
 	var currentBid = $("#currentBid");
 	currentBid.empty();
@@ -82,7 +86,7 @@ $(document).on('pagebeforeshow', "#cart", function(event, ui) {
 	var item;
 	for (var i = 0; i < len; ++i) {
 		item = cartList[i];
-		cList.append("<li><a onclick=GetItem(" + item.id + ")>" + "<img src='../" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" +
+		cList.append("<li><a onclick=GetItem(" + item.id + ")>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" +
 		//				"<form class='ui-li-aside'><div data-role='fieldcontain'><label for='qty'>Qty:</label><br /><input onclick='#' style='width:35px' name='qty' id='qty' type='number' /></div></form>" +
 		"<a>A</a></a></li>");
 		sTotal += parseFloat(item.price);
@@ -110,14 +114,14 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 			item = cartList[i];
 			shippingTotal += parseFloat(item.shippingPrice);
 			subTotal += parseFloat(item.price);
-			items_ship.append("<li>" + "<img src='../" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p></li>" + "<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + "<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
+			items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p></li>" + "<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + "<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
 		}
 
 	} else {
 		var item = currentItem;
 		shippingTotal = parseFloat(item.shippingPrice);
 		subTotal = parseFloat(item.price);
-		items_ship.append("<li>" + "<img src='../" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p></li>" + "<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + "<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><br>");
+		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p></li>" + "<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + "<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><br>");
 	}
 	total = shippingTotal + subTotal;
 
@@ -604,7 +608,8 @@ function login() {
 		},
 		error : function(data, textStatus, jqXHR) {
 			console.log("try again");
-			$.mobile.navigate("../view/index.html");
+			alert("Wrong username or password.")
+			//$.mobile.navigate("../index.html");
 
 		}
 	});
@@ -694,3 +699,19 @@ function register() {
 
 }
 
+/*===============================================================================================
+ USER CHECK Function
+ =============================================================================================*/
+function registerChecker() {
+	$.ajax({
+			url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+			contentType : "application/json",
+			success : function(data, textStatus, jqXHR) {
+			console.log(data);
+			if (data != 'OK')
+				$.mobile.navigate("/BigBox/view/user.html");
+			},
+				error : function(data, textStatus, jqXHR) {
+			}
+			});
+}

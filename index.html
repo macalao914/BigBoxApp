@@ -27,153 +27,25 @@
 
 	<body>
 		<!-- homepage -->
-		<div data-role="page" id="home">
+		<div data-role="page" id="home" >
+			
 			<div data-role="header" data-nobackbtn="true">
 				<h1>BigBox</h1>
-				<script>
-					$.ajax({
-						url : "http://127.0.0.1:3412/BigBoxServer/verify/",
-						contentType : "application/json",
-						success : function(data, textStatus, jqXHR) {
-							console.log(data);
-							if (data != 'OK')
-								$.mobile.navigate("/BigBox/view/user.html");
-						},
-						error : function(data, textStatus, jqXHR) {
-
-						}
-					});
-
-				</script>
-				<a href="#login" class="ui-btn-right">Login</a>
-				<a href="#signUp"class="ui-btn-left">Signup</a>
+				<script>registerChecker()</script>
+				<a href="view/login.html" class="ui-btn-right">Login</a>
+				<a href="view/signup.html"class="ui-btn-left">Signup</a>
 			</div>
 
 			<div align="center">
 				<input type="search" name="searchValue" id="searchValue" onkeyup="displayunicode(event)">
-
 				<img src=" image/generic_background.png"/>
 			</div>
 
 			<div align="center"  class="home_tagline">
 				Service sharing from anywhere
-			</div>
-			<a data-role="button" href="#categoryPage"> Browse by category </a>
-		</div>
-
-		<!-- login page -->
-		<div data-role="page" id="login">
-
-			<div data-role="header" data-nobackbtn="true">
-				<a href="#home"class="ui-btn-left" data-icon="home">Home</a>
-
-				<h1>Login</h1>
-			</div>
-
-			<div data-role="content" data-inset="true">
-
-				<form id="login_form" method="post">
-					<div>
-						<input type="text" id="username" name="username" placeholder="Username"/>
-					</div>
-					<div>
-						<input type="password" id="password" name="password" placeholder="Password"/>
-					</div>
-					<div>
-						<input type="submit" data-inline="true" data-theme="b" onclick="login()" value="Log In"/>
-
-					</div>
-
-				</form>
-				<hr />
-				Don't have a login? <a href="#signUp" data-rel="dialog">Sign Up</a>
+				<a data-role="button" href="#categoryPage"> Browse by category </a>
 			</div>
 		</div>
-
-		<!-- Sign up page -->
-
-		<div data-role="page" id="signUp">
-
-			<div data-role="header" data-nobackbtn="true">
-				<h1>Registration Form</h1>
-			</div>
-
-			<div data-role="content" data-inset="true">
-
-				<form>
-
-					<div data-role="collapsible-set">
-
-						<div data-role="collapsible" data-collapsed="false">
-
-							<h3>Personal Information</h3>
-
-							<div data-role="fieldcontain">
-
-								<div data-role="fieldcontain">
-									<input align="left"  type="text" id="fname" name="fname" placeholder="First Name"  />
-								</div>
-
-								<div data-role="fieldcontain">
-									<input  align="left" type="text" id="lname" name="lname" placeholder="Last Name" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="text" id="address" name="address" placeholder="Street Address" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="text" id="city" name="city" placeholder="City" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="text" id="state" name="state" placeholder="State" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="text" id="country" name="country" placeholder="Country" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="text" id="zipcode" name="zipcode" placeholder="ZIP Code" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="text" id="phone" name="phone" placeholder="Phone Number" />
-								</div>
-
-							</div>
-
-							<div data-role="collapsible">
-								<h3>Account Information</h3>
-								<div data-role="fieldcontain">
-									<input type="text" id="new_username" name="new_username" placeholder="Username" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="text" id="email" name="email" placeholder="Email" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="password" id="new_password" name="new_password" placeholder="Password" />
-								</div>
-								<div data-role="fieldcontain">
-									<input  align="left" type="password"  id="renter" name="renter" placeholder="Re-enter Password" />
-								</div>
-								<div data-role="fieldcontain">
-									<input type="text" id="question" name="question" placeholder="Security Question" />
-								</div>
-								<div data-role="fieldcontain">
-									<input type="text" id="answer" name="answer" placeholder="Answer" />
-								</div>
-
-							</div>
-
-						</div>
-
-						<div>
-							<input type="submit" onclick="register()" data-inline="true" data-theme="b" value="Submit"/>
-
-						</div>
-					</div>
-
-				</form>
-
-			</div>
-		</div>
-
 	</body>
 </html>
 
