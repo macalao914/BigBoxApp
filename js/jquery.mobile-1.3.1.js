@@ -6205,6 +6205,7 @@ $.widget( "mobile.listview", $.mobile.widget, $.extend( {
 		shadow: true,
 		inset: false,
 		initSelector: ":jqmData(role='listview')"
+		
 	},
 
 	_create: function() {

@@ -15,17 +15,63 @@
 		<body>
 			<!-- homepage -->
 			<div data-role="page" id="categories">
-				<div data-role="header" data-nobackbtn="true">
-					<a href="../index.html" data-role="button" data-icon="home">back</a>
+				<div data-role="header" >
+					<a data-role="button" data-rel="back"> Back </a>
 					<h1>Categories</h1>
 				</div>
-				<div data-role="content">
-					<ul id="categorie-list" data-role="listview" data-inset="false" >
-						<!--hardcoded but must be ajax -->
-						<li data-role = "collapsible" value="Utility"></li>
-					</ul>
+				<div data-role="collapsible-set" data-theme="a" data-content-theme="a">
+					<div data-role="collapsible" data-theme="a" data-content-theme="a" data-iconpos="right">
+						<h3>Books</h3>
+						<div data-role="collapsible-set" data-theme="a" data-content-theme="a">
+							<ul data-role="listview"  data-inset= "true">
+								<li><a href="results.html">Children</a></li>
+								<li><a href="results.html">Fiction</a></li>
+								<li><a href="results.html">Technology</a></li>
+								<li><a href="results.html">Bussiness</a></li>
+							</ul>
+						</div>
+					</div>
+					<ul data-role="listview" data-inset= "false" data-theme="a">
+									<li><a href="results.html" >Fishing</a></li>
+									<li><a href="results.html">Baseball</a></li>
+								</ul>
+					
+					<div data-role="collapsible" data-theme="a" data-content-theme="a" data-iconpos="right">
+						<h3>Clothing</h3>
+						<div data-role="collapsible-set" data-theme="a" data-content-theme="a">
+							<div data-role="collapsible" data-theme="a" data-content-theme="a">
+								<h3>Children</h3>
+								<ul data-role="listview" data-inset= "true">
+									<li><a href="results.html" >Shirt</a></li>
+									<li><a href="results.html">Pant</a></li>
+									<li><a href="results.html">Sock</a></li>
+								</ul>
+								</div>
+							<div data-role="collapsible" data-theme="a" data-content-theme="a">
+								<h3>Men</h3>
+								<ul data-role="listview" data-inset= "true">
+									<li><a href="results.html" >Shirt</a></li>
+									<li><a href="results.html">Pant</a></li>
+									<li><a href="results.html">Hat</a></li>
+									<li><a href="results.html">knot</a></li>
+								</ul>
+							</div>
+							<div data-role="collapsible" data-theme="a" data-content-theme="a">
+								<h3>Woman</h3>
+								<ul data-role="listview" data-inset= "true">
+									<li><a href="results.html" >Shirt</a></li>
+									<li><a href="results.html">Pant</a></li>
+									<li><a href="results.html">Dress</a></li>
+									<li><a href="results.html">Shoes</a></li>
+								</ul>
+							</div>
+							
+					</div>
+					
 				</div>
-			</div>
+				
+				
+
 		</body>
 
 </html>
