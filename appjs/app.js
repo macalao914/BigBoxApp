@@ -529,7 +529,7 @@ function displayunicode(e) {
 
 	//Check if Enter was received.
 	if (unicode == 13) {
-		$.mobile.navigate("/BigBox/view/results.html");
+		$.mobile.navigate("view/results.html");
 	}
 }
 
