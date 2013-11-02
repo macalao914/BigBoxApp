@@ -23,8 +23,9 @@ url : "http://127.0.0.1:3412/BigBoxServer/verify/",
 contentType : "application/json",
 success : function(data, textStatus, jqXHR) {
 $(".user_header").empty;
-$(".user_header").append('<a href="../account.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" ></a>\
-<DIV style="position: absolute; top:-10px; left:0px; width:200px; height:25px"><h5>Welcome<br> ' + data.fname+' '+data.lname + '!</h5> </a></DIV>');
+$(".user_header").append('<a href="" class="ui-btn-left" \
+				style="color: #FFFFFF" onclick="account()">\
+				<DIV style="position: absolute; top:-10px; left:0px; width:200px; height:25px"><h5>Welcome<br> ' + data.fname+' '+data.lname + '!</h5> </a></DIV>');
 $('.account').append('Account: ' + data.id);
 if (data.isAdmin) {
 $('#navbar_user2').hide();
@@ -44,7 +45,7 @@ console.log("try again");
 });
 				</script>
 				<div data-role="controlgroup" data-type="horizontal" data-inline="true" align="right">
-					<a href="../index.html" data-role="button" data-icon="home">Home</a>
+					<a href="../../index.html" data-role="button" data-icon="home">Home</a>
 					<a data-rel="page" data-role="button" onclick="logout()">Log Out </a>
 				</div>
 				<div id="navbar_user2" data-role="navbar" data-role="header" >
