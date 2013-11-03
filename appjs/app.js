@@ -81,22 +81,26 @@ $(document).on('pagebeforeshow', "#cart", function(event, ui) {
 	var subtotal = $("#subtotal");
 	var page = $("#cart");
 	var sTotal = 0.00;
+	var itemsQty = 0;
 
 	cList.empty();
 	var item;
 	for (var i = 0; i < len; ++i) {
 		item = cartList[i];
-		cList.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" +
+		cList.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price+ "</p>" + 
+		"<p> Qty: " + item.qtyToPurchase+ "</p>" +
 		//				"<form class='ui-li-aside'><div data-role='fieldcontain'><label for='qty'>Qty:</label><br /><input onclick='#' style='width:35px' name='qty' id='qty' type='number' /></div></form>" +
 		"<a data-icon='delete' data-role='button' onclick='deleteCartItem(" + item.id + ")'></a></a></li>");
-		sTotal += parseFloat(item.price);
+		sTotal += parseFloat(item.price)*item.qtyToPurchase;
+		itemsQty += item.qtyToPurchase;
 	}
 	
 	subtotal.empty();
-	subtotal.append("<p>Subtotal (" + len + " items) <br />$" + sTotal.toFixed(2));
+	subtotal.append("<p>Subtotal (" + itemsQty + " items) <br />$" + sTotal.toFixed(2));
 	cList.listview("refresh");
 	
 });
+
 
 //checkout page
 $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
@@ -238,7 +242,6 @@ $(document).on('pagebeforeshow', "#descriptionPage", function(event, ui) {
 
 	console.log(currentItem);
 	var detailsParaSpace = $(".detailsPara");
-	console.log("GOT HERE");
 	detailsParaSpace.empty();
 	detailsParaSpace.append("Name: " + currentItem.name + "<br/> Model: " + currentItem.model + "<br/> Year: " + currentItem.year + "<br/> Dimension: " + currentItem.dimension + "<br/> Weigth: " + currentItem.weigth + "<br/> Ship to:" + currentItem.shipTo + " <br/> Ship from: " + currentItem.shipFrom);
 
@@ -411,11 +414,12 @@ function GetCart(show) {
 
 //A-adir un item al carro
 function AddToCart() {
+	var id = currentItem.id;
 	$.mobile.loading("show");
 	var newProdJSON = JSON.stringify(currentItem);
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/cart/",
-		method : 'post',
+		url : "http://localhost:3412/BigBoxServer/cart/" + id,
+		method : 'put',
 		data : newProdJSON,
 		contentType : "application/json",
 		dataType : "json",
@@ -436,18 +440,18 @@ function AddToCart() {
 }
 
 function deleteCartItem(ItemId) {
-	GetItem(ItemId, false);
-	var userConfirmation = confirm("Are you sure you want to delete the cart item: \n" + currentItem.name);
-	
+
+	var userConfirmation = confirm("Are you sure you want to remove this item?");
 	if (userConfirmation == false) {
 		return;
 	}
 	
 	var cartList = document.getElementById("cart-list");
-	var id = currentItem.id;	
+		
 	$.mobile.loading("show");
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/cart/" + id,
+		async : false,
+		url : "http://localhost:3412/BigBoxServer/cart/" + ItemId,
 		method : 'delete',
 		contentType : "application/json",
 		dataType : "json",
