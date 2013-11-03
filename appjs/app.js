@@ -724,7 +724,7 @@ function registerChecker(num) {
 				console.log("User is: " + data);
 				$(".user_header").empty;
 				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
-				style="color: #FFFFFF" onclick="account()">Welcome ' + data.fname+' '+data.lname + '! </a>');
+				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + data.fname+' '+data.lname + '!</h5> </a>');
 				},
 				error : function(data, textStatus, jqXHR) {
 				console.log("try again");
@@ -739,7 +739,7 @@ function registerChecker(num) {
 				contentType : "application/json",
 				success : function(data, textStatus, jqXHR) {
 					$(".user_header").empty;
-					$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" >Welcome! ' + data.fname + ' ' + data.lname + '</a>');
+					$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" ><h5>Welcome! ' + data.fname + ' ' + data.lname + '</h5></a>');
 					$('.account').append('Account: ' + data.id);
 					if (data.isAdmin) {
 						$('#navbar_admin'+num).show();
