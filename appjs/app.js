@@ -11,7 +11,7 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 			for (var i = 0; i < len; ++i) {
 				item = itemList[i];
 
-				list.append("<li><a onclick=GetItem(" + item.id + ")>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
+				list.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
 			}
 			list.listview("refresh");
 		},
@@ -67,7 +67,7 @@ $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
 
 	var prodBidInfo = $("#imgSpace");
 	prodBidInfo.empty();
-	prodBidInfo.append("<img src= '../image/" + currentItem.img + "' height='62' width='62'>");
+	prodBidInfo.append("<img src= '../image/" + currentItem.img + "' height='80' width='80'>");
 
 	var currentBid = $("#currentBid");
 	currentBid.empty();
@@ -76,25 +76,26 @@ $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
 
 //cart page
 $(document).on('pagebeforeshow', "#cart", function(event, ui) {
-
 	var len = cartList.length;
 	var cList = $("#cart-list");
 	var subtotal = $("#subtotal");
+	var page = $("#cart");
 	var sTotal = 0.00;
 
 	cList.empty();
 	var item;
 	for (var i = 0; i < len; ++i) {
 		item = cartList[i];
-		cList.append("<li><a onclick=GetItem(" + item.id + ")>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" +
+		cList.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" +
 		//				"<form class='ui-li-aside'><div data-role='fieldcontain'><label for='qty'>Qty:</label><br /><input onclick='#' style='width:35px' name='qty' id='qty' type='number' /></div></form>" +
-		"<a>A</a></a></li>");
+		"<a data-icon='delete' data-role='button' onclick='deleteCartItem(" + item.id + ")'></a></a></li>");
 		sTotal += parseFloat(item.price);
 	}
-
+	
 	subtotal.empty();
 	subtotal.append("<p>Subtotal (" + len + " items) <br />$" + sTotal.toFixed(2));
 	cList.listview("refresh");
+	
 });
 
 //checkout page
@@ -257,9 +258,10 @@ function ConverToJSON(formData) {
 
 //get a item by its id
 var currentItem = {};
-function GetItem(id) {
+function GetItem(id, display) {
 	$.mobile.loading("show");
 	$.ajax({
+		async : false,
 		url : "http://localhost:3412/BigBoxServer/items/" + id,
 		method : 'get',
 		contentType : "application/json",
@@ -267,7 +269,9 @@ function GetItem(id) {
 		success : function(data, textStatus, jqXHR) {
 			currentItem = data.item;
 			$.mobile.loading("hide");
-			$.mobile.navigate("../view/details.html");
+			if(display){
+				$.mobile.navigate("../view/details.html");
+			}
 		},
 		error : function(data, textStatus, jqXHR) {
 			console.log("textStatus: " + textStatus);
@@ -281,55 +285,7 @@ function GetItem(id) {
 	});
 }
 
-//arreglar la funcion para que detecte que es el cart de cierto usuario
-var cartList = {};
-function GetCart(show) {
-	console.log("cartList");
-	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/cart/",
-		contentType : "application/json",
-		dataType : "json",
-		success : function(data, textStatus, jqXHR) {
-			cartList = data.cart;
-			console.log(cartList);
-		},
-		error : function(data, textStatus, jqXHR) {
-			console.log("textStatus: " + textStatus);
-			alert("Data not found!");
-		}
-	});
-	$.mobile.loading("hide");
-	if (show) {
-		$.mobile.navigate("../view/cart.html");
-	}
 
-}
-
-//A-adir un item al carro
-function AddToCart() {
-	$.mobile.loading("show");
-	var newProdJSON = JSON.stringify(currentItem);
-	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/cart/",
-		method : 'post',
-		data : newProdJSON,
-		contentType : "application/json",
-		dataType : "json",
-		success : function(data, textStatus, jqXHR) {
-			$.mobile.loading("hide");
-			GetCart(true);
-		},
-		error : function(data, textStatus, jqXHR) {
-			console.log("textStatus: " + textStatus);
-			$.mobile.loading("hide");
-			if (data.status == 404) {
-				alert("Cart not found.");
-			} else {
-				alter("Internal Server Error.");
-			}
-		}
-	});
-}
 
 /*===============================================================================================
  Methods related to shipping and billing addresses
@@ -424,6 +380,95 @@ function GetAddresses(isShipping) {
 		}
 	});
 }
+
+/*===============================================================================================
+ Functions related Cart
+ =============================================================================================*/
+//arreglar la funcion para que detecte que es el cart de cierto usuario
+var cartList = {};
+function GetCart(show) {
+	console.log("cartList");
+	$.ajax({
+		async : false,
+		url : "http://localhost:3412/BigBoxServer/cart/",
+		contentType : "application/json",
+		dataType : "json",
+		success : function(data, textStatus, jqXHR) {
+			cartList = data.cart;
+			console.log(cartList);
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			alert("Data not found!");
+		}
+	});
+	$.mobile.loading("hide");
+	if (show) {
+		$.mobile.navigate("../view/cart.html");
+	}
+
+}
+
+//A-adir un item al carro
+function AddToCart() {
+	$.mobile.loading("show");
+	var newProdJSON = JSON.stringify(currentItem);
+	$.ajax({
+		url : "http://localhost:3412/BigBoxServer/cart/",
+		method : 'post',
+		data : newProdJSON,
+		contentType : "application/json",
+		dataType : "json",
+		success : function(data, textStatus, jqXHR) {
+			$.mobile.loading("hide");
+			GetCart(true);
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			$.mobile.loading("hide");
+			if (data.status == 404) {
+				alert("Cart not found.");
+			} else {
+				alert("Internal Server Error.");
+			}
+		}
+	});
+}
+
+function deleteCartItem(ItemId) {
+	GetItem(ItemId, false);
+	var userConfirmation = confirm("Are you sure you want to delete the cart item: \n" + currentItem.name);
+	
+	if (userConfirmation == false) {
+		return;
+	}
+	
+	var cartList = document.getElementById("cart-list");
+	var id = currentItem.id;	
+	$.mobile.loading("show");
+	$.ajax({
+		url : "http://localhost:3412/BigBoxServer/cart/" + id,
+		method : 'delete',
+		contentType : "application/json",
+		dataType : "json",
+		success : function(data, textStatus, jqXHR){
+			$.mobile.loading("hide");
+			GetCart(false);
+			refreshPage();
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			$.mobile.loading("hide");
+			if (data.status == 404){
+				alert("Item not found.");
+			}
+			else {
+				alert("Internal Server Error.");
+			}
+		}
+	});
+}
+
 
 /*===============================================================================================
  Functions related to payment method
@@ -556,7 +601,7 @@ function getSubmitValue() {
 		contentType : "application/json",
 		dataType : "json",
 		success : function(data, textStatus, jqXHR) {
-			GetItem(currentItem.id);
+			GetItem(currentItem.id, true);
 			//refresh Current Item
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -714,4 +759,18 @@ function registerChecker() {
 				error : function(data, textStatus, jqXHR) {
 			}
 			});
+}
+
+/*===============================================================================================
+ Helper Function
+ =============================================================================================*/
+function refreshPage(){
+	$.mobile.changePage(
+		window.location.href,
+		{
+		allowSamePageTransition	: true,
+		transition			    : 'none',
+		showLoadMsg				: false,
+		reloadPage 				: true
+	});
 }
