@@ -529,7 +529,7 @@ function displayunicode(e) {
 
 	//Check if Enter was received.
 	if (unicode == 13) {
-		$.mobile.navigate("view/results.html");
+		$.mobile.navigate("../view/results.html");
 	}
 }
 
@@ -622,7 +622,7 @@ function logout() {
 		url : "http://127.0.0.1:3412/BigBoxServer/logout",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("http://127.0.0.1:8020/BigBoxApp/");
+			$.mobile.navigate("home.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
