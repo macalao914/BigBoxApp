@@ -637,7 +637,7 @@ function account() {
 		url : "http://127.0.0.1:3412/BigBoxServer/account",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("../view/account.html");
+			$.mobile.navigate("http://127.0.0.1:8020/BigBoxApp/view/account/watching.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -702,8 +702,9 @@ function register() {
 /*===============================================================================================
  USER CHECK Function
  =============================================================================================*/
-function registerChecker() {
-	$.ajax({
+function registerChecker(num) {
+		if(num==0){
+			$.ajax({
 			url : "http://127.0.0.1:3412/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
@@ -714,4 +715,50 @@ function registerChecker() {
 				error : function(data, textStatus, jqXHR) {
 			}
 			});
+		}
+		else if(num == 5){
+				$.ajax({
+				url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+				contentType : "application/json",
+				success : function(data, textStatus, jqXHR) {
+				console.log("User is: " + data);
+				$(".user_header").empty;
+				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
+				style="color: #FFFFFF" onclick="account()">Welcome ' + data.fname+' '+data.lname + '! </a>');
+				},
+				error : function(data, textStatus, jqXHR) {
+				console.log("try again");
+
+				}
+				});
+		}
+		else{
+			
+			$.ajax({
+				url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+				contentType : "application/json",
+				success : function(data, textStatus, jqXHR) {
+					$(".user_header").empty;
+					$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" >Welcome! ' + data.fname + ' ' + data.lname + '</a>');
+					$('.account').append('Account: ' + data.id);
+					if (data.isAdmin) {
+						$('#navbar_admin'+num).show();
+						$('#navbar_user'+num).hide();
+					} else {
+						$('#navbar_user'+num).show();
+						$('#navbar_admin'+num).hide();
+					}
+
+					$('#home').page();
+
+			},
+			error : function(data, textStatus, jqXHR) {
+			console.log("try again");
+
+				}
+			});
+	
+			
+		}
+			
 }
