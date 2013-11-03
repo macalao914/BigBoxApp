@@ -164,7 +164,7 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 	} else {
 		//todavia no ha seleccionado
 		shipTo.empty();
-		shipTo.append("<h5> Ship to <hr style='padding:0;margin:0'/></h5><a onClick='GetAddresses(true)'><p style='padding:0px 10px 10px 0; margin:0'>Select Address</p></a><hr style='margin:0'><br />");
+		shipTo.append("<h5> Ship to <hr style='padding:0;margin:0'/></h5><a onClick='GetAddresses(true)'><p style='padding:0px 10px 10px 0; margin:0'><strong>Select Address</strong></p></a><hr style='margin:0'><br />");
 	}
 
 	//Payment
@@ -173,22 +173,22 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 		payment.empty();
 		var cardNumberDisplay = new Array(currentCreditCard.cardnumber.length - 4 + 1).join('x') + currentCreditCard.cardnumber.slice(-4);
 		cardNumberDisplay = cardNumberDisplay.substring(cardNumberDisplay.length - 7);
-		payment.append("<h5> Payment <hr style='padding:0;margin:0' /></h5><a onClick='GetCreditCards(false)'>" + "<p style='padding:5px 10px 20px 0;margin:0'>" + currentCreditCard.holder_name + "<br />" + cardNumberDisplay + "</p></a>");
+		payment.append("<h5> Payment <hr style='padding:0;margin:0' /></h5><a onClick='GetCreditCards(false)'>" + "<p style='padding:5px 10px 20px 0;margin:0'><strong>Payment method:</strong></p>" + "<p>" + currentCreditCard.holder_name + "<br />" + cardNumberDisplay + "</p></a>");
 
 		//verificar si ya puso una un billing address
 		if (b_address_selected) {
 			//codigo para billing cuando ya selecciono uno
-			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:5px 10px 20px 0;margin:0'>Billing Address: <br>" + billing_address.name + "<br />" + billing_address.street + "<br />" + billing_address.city + ", " + billing_address.state + " " + billing_address.zip + " " + billing_address.country + "<br />" + billing_address.phone + "</p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px > Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
+			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:5px 10px 20px 0;margin:0'><strong>Billing Address:</strong> <br>" + billing_address.name + "<br />" + billing_address.street + "<br />" + billing_address.city + ", " + billing_address.state + " " + billing_address.zip + " " + billing_address.country + "<br />" + billing_address.phone + "</p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px > Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
 
 		} else {
 			//todavia no ha seleccionado una tajeta
-			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:10px 10px 10px 0; margin:0'>Select Billing Address</p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px>Price: $" + subTotal.toFixed(2) + "<br> Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
+			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:10px 10px 10px 0; margin:0'><strong>Select Billing Address</strong></p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px>Price: $" + subTotal.toFixed(2) + "<br> Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
 		}
 
 	} else {
 		//no ha puesto tarjeta
 		payment.empty();
-		payment.append("<h5> Payment <hr style='padding:0;margin:0'/></h5><a onClick='GetCreditCards()'><p style='padding:0px 10px 10px 0; margin:0'>Select Credit Card</p></a>");
+		payment.append("<h5> Payment <hr style='padding:0;margin:0'/></h5><a onClick='GetCreditCards()'><p style='padding:0px 10px 10px 0; margin:0'><strong>Select Credit Card</strong></p></a>");
 		payment.append("<hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px'>Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr>");
 
 	}
@@ -236,7 +236,7 @@ $(document).on('pagebeforeshow', "#ShippingOrPaymentSel", function(event, ui) {
 		head.append("Payment Method");
 		newSoP.append("<br /><li data-icon='plus'><a href='../view/addNewCard.html'><h5>Add new card</h5></a></li>");
 
-		//conseguir todas las direcciones del usuario y apendiarlas
+		//conseguir todas las tarjetas del usuario y apendiarlas
 		var lenC = creditcardList.length;
 		var aCredCard;
 		var cardNumberDisp;
