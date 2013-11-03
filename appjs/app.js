@@ -11,7 +11,8 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 			for (var i = 0; i < len; ++i) {
 				item = itemList[i];
 
-				list.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
+				list.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + 
+				"<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
 			}
 			list.listview("refresh");
 		},
@@ -115,11 +116,35 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 	if (is_from_cart) {
 		var item;
 		var len = cartList.length;
+		var options = "";
+		
 		for ( i = 0; i < len; ++i) {
 			item = cartList[i];
+			//Usar el qty available que se va a crear en Item para comparar
+			//Por ahora hardwired 5
+			options = "";
+			for(j = 1; j <= 5; j++ ){
+				if(j==item.qtyToPurchase){
+					options+= "<option value=' "+ j +"' selected='selected'>  "+ j + "  </option>";
+				}
+				
+				else{
+					options+= "<option value=' "+ j +"'>  "+ j + "  </option>";
+				}
+			}
 			shippingTotal += parseFloat(item.shippingPrice);
 			subTotal += parseFloat(item.price);
-			items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p></li>" + "<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + "<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
+			items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + 
+			"<div class='ui-li-aside'><fieldset data-role='controlgroup'>" +
+			"<legend><pre>Qty: </pre> </legend>" +
+			"<select name='qty' id='qty'>"+ options +
+			"</select></fieldset></div></li>"
+			
+			);
+			
+
+//			"<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + 
+//			"<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
 		}
 
 	} else {

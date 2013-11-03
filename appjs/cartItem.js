@@ -1,4 +1,4 @@
-function cartItem (name, buyItNow, price, img, condition ,hasBid, qtyToPurchase){
+function cartItem (name, buyItNow, price, img, condition ,hasBid, qtyToPurchase, shippingPrice){
 	this.id = "";
 	this.name = name;
 	this.buyItNow = buyItNow;	
@@ -7,5 +7,6 @@ function cartItem (name, buyItNow, price, img, condition ,hasBid, qtyToPurchase)
 	this.condition = condition;	
 	this.hasBid = hasBid;
 	this.qtyToPurchase = qtyToPurchase;
+	this.shippingPrice = shippingPrice;
 	//Add quantity of items available to compare with qty to buy
 }
