@@ -622,7 +622,7 @@ function logout() {
 		url : "http://127.0.0.1:3412/BigBoxServer/logout",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("home.html");
+			$.mobile.navigate("/BigBoxApp/index.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
