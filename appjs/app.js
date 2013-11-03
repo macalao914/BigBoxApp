@@ -637,7 +637,7 @@ function account() {
 		url : "http://127.0.0.1:3412/BigBoxServer/account",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("../view/account.html");
+			$.mobile.navigate("http://127.0.0.1:8020/BigBoxApp/view/account/watching.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
