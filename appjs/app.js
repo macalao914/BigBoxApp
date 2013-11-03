@@ -603,7 +603,7 @@ function login() {
 		contentType : "application/json",
 		data : logInfo,
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("/BigBox/view/user.html");
+			$.mobile.navigate("/BigBoxApp/view/user.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -622,7 +622,7 @@ function logout() {
 		url : "http://127.0.0.1:3412/BigBoxServer/logout",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("http://127.0.0.1:8020/BigBox/");
+			$.mobile.navigate("http://127.0.0.1:8020/BigBoxApp/");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -687,7 +687,7 @@ function register() {
 		contentType : "application/json",
 		data : registerInfo,
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("/BigBox/view/signedUp.html");
+			$.mobile.navigate("/BigBoxApp/view/signedUp.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -709,7 +709,7 @@ function registerChecker() {
 			success : function(data, textStatus, jqXHR) {
 			console.log(data);
 			if (data != 'OK')
-				$.mobile.navigate("/BigBox/view/user.html");
+				$.mobile.navigate("/BigBoxApp/view/user.html");
 			},
 				error : function(data, textStatus, jqXHR) {
 			}
