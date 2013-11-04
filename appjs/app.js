@@ -65,13 +65,14 @@ $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
 	prodBidName.empty();
 	prodBidName.append(" " + currentItem.name);
 
-	var prodBidInfo = $("#imgSpace");
-	prodBidInfo.empty();
-	prodBidInfo.append("<img src= '../image/" + currentItem.img + "' height='62' width='62'>");
+	//var prodBidInfo = $("#imgSpace");
+	//prodBidInfo.empty();
+	$('#imgSpace').attr('src', "../image/"+ currentItem.img);
+	//prodBidInfo.append("<img src= '../image/" + currentItem.img + "class='ui-li-thumb'>");
 
 	var currentBid = $("#currentBid");
 	currentBid.empty();
-	currentBid.append(" " + currentItem.bid);
+	currentBid.append(" Current Bid &emsp; &emsp; &emsp;" + currentItem.bid);
 });
 
 //cart page
