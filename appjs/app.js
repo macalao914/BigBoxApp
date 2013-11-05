@@ -703,7 +703,7 @@ function login() {
 		'password' : pass
 	});
 	$.ajax({
-		url : "http://127.0.0.1:3412/BigBoxServer/user",
+		url : "http://localhost:3412/BigBoxServer/user",
 		type : "post",
 		contentType : "application/json",
 		data : logInfo,
@@ -713,7 +713,7 @@ function login() {
 		},
 		error : function(data, textStatus, jqXHR) {
 
-			alert("Wrong username or password.")
+			alert("Wrong username or password.");
 			//$.mobile.navigate("../index.html");
 
 		}
@@ -724,7 +724,7 @@ function login() {
 function logout() {
 
 	$.ajax({
-		url : "http://127.0.0.1:3412/BigBoxServer/logout",
+		url : "http://localhost:3412/BigBoxServer/logout",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 			$.mobile.navigate("/BigBoxApp/index.html");
@@ -739,10 +739,10 @@ function logout() {
 
 function account() {
 	$.ajax({
-		url : "http://127.0.0.1:3412/BigBoxServer/account",
+		url : "http://localhost:3412/BigBoxServer/account",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("http://127.0.0.1:8020/BigBoxApp/view/account/watching.html");
+			$.mobile.navigate("http://localhost:8020/BigBoxApp/view/account/watching.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -787,7 +787,7 @@ function register() {
 	});
 
 	$.ajax({
-		url : "http://127.0.0.1:3412/BigBoxServer/register",
+		url : "http://localhost:3412/BigBoxServer/register",
 		type : "post",
 		contentType : "application/json",
 		data : registerInfo,
@@ -810,7 +810,7 @@ function register() {
 function registerChecker(num) {
 		if(num==0){
 			$.ajax({
-			url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+			url : "http://localhost:3412/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
 			console.log(data);
@@ -823,7 +823,7 @@ function registerChecker(num) {
 		}
 		else if(num == 5){
 				$.ajax({
-				url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+				url : "http://localhost:3412/BigBoxServer/verify/",
 				contentType : "application/json",
 				success : function(data, textStatus, jqXHR) {
 				console.log("User is: " + data);
@@ -840,7 +840,7 @@ function registerChecker(num) {
 		else{
 			
 			$.ajax({
-				url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+				url : "http://localhost:3412/BigBoxServer/verify/",
 				contentType : "application/json",
 				success : function(data, textStatus, jqXHR) {
 					$(".user_header").empty;
