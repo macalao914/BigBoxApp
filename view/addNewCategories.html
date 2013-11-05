@@ -19,49 +19,71 @@
 				<a data-role="button" data-rel="back"> Back </a>
 				<h1>Add Categories</h1>
 			</div>
-			<HTML>
-				<HEAD>
+			
 
 					<SCRIPT language="javascript">
 					//No va a estar aqui es por testing
 						function add(type) {
 								
 							//Create an input type dynamically.
-							var element = document.createElement("input");
+							//var element = document.createElement("input");
+							//var element2 = document.createElement("input");
 
 							//Assign different attributes to the element.
 							//element.setAttribute("type", "input");
 							//element.setAttribute("value", type);
 							//element.setAttribute("name", type);
-							element.setAttribute("placeholder", type);
 							
-
-							var foo = document.getElementById("fooBar");
-
+							//element.setAttribute("placeholder", type);
+							//element2.setAttribute("type", "button");
+							//element2.setAttribute("value", "x");
+							
+							//var inputBar = document.getElementById("inputBar");
+							$('subCategory').selectmenu('disable');
+							if(type == "category"){
+								$("<div id='' class='' style='' align = 'left'>\
+									<input  placeholder='Category'/>\
+									<input type='checkbox' name='' id='' class='' data-role=''>\
+									</div>").appendTo("#inputBar");
+									}					
+							else if(type == "subcategory"){
+								$("<div id='' class='' style='' align = 'center'>\
+									<input  placeholder='Subcategory'/>\
+									<input type='checkbox' name='' id='' class='' data-role=''>\
+									</div>").appendTo("#inputBar");
+									}
+									else{
+								$("<div id='' class='' style='' align = 'right'>\
+									<input  placeholder='2 subcategory'/>\
+									<input type='checkbox' name='' id='' class='' data-role=''>\
+									</div>").appendTo("#inputBar");
+									}
+								
 							//Append the element in page (in div).
-							foo.appendChild(element);
-
+							//inputBar.appendChild(element);
+							//inputBar.appendChild(element2);
 						}
 					</SCRIPT>
-				</HEAD>
-				<BODY>
+					
+				
 					
 					<FORM>
 						
 						<H2>Dynamically add new category.</H2>
-						Enter the category name to create:
-						<div id="categoryBar" align="center"><input  placeholder="Category"/></div>
 						<SELECT name="element">
+							<OPTION value="category">Category</OPTION>
 							<OPTION value="subcategory">Subcategory</OPTION>
 							<OPTION value="2nd subcategory">Second Subcategory</OPTION>
 						</SELECT>
 
 						<INPUT type="button" value="Add" onclick="add(document.forms[0].element.value)">
-						
-						<div id="fooBar" align="center"></div>
-
-					</FORM>
+						<INPUT type="button" value="Remove checked" onclick="remove(document.forms[0].element.value)">
 					
-				</BODY>
-			</HTML>
+					</FORM>	
+						<div id="inputBar" align="center"></div>
+						
+					
+					
+			
 	</body>
+</html>

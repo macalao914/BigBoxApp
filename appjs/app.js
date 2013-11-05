@@ -11,8 +11,7 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 			for (var i = 0; i < len; ++i) {
 				item = itemList[i];
 
-				list.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + 
-				"<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
+				list.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
 			}
 			list.listview("refresh");
 		},
@@ -66,13 +65,14 @@ $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
 	prodBidName.empty();
 	prodBidName.append(" " + currentItem.name);
 
-	var prodBidInfo = $("#imgSpace");
-	prodBidInfo.empty();
-	prodBidInfo.append("<img src= '../image/" + currentItem.img + "' height='80' width='80'>");
+	//var prodBidInfo = $("#imgSpace");
+	//prodBidInfo.empty();
+	$('#imgSpace').attr('src', "../image/"+ currentItem.img);
+	//prodBidInfo.append("<img src= '../image/" + currentItem.img + "class='ui-li-thumb'>");
 
 	var currentBid = $("#currentBid");
 	currentBid.empty();
-	currentBid.append(" " + currentItem.bid);
+	currentBid.append(" Current Bid &emsp; &emsp; &emsp;" + currentItem.bid);
 });
 
 //cart page
@@ -610,7 +610,7 @@ function displayunicode(e) {
 
 	//Check if Enter was received.
 	if (unicode == 13) {
-		$.mobile.navigate("view/results.html");
+		$.mobile.navigate("../view/results.html");
 	}
 }
 
@@ -684,7 +684,7 @@ function login() {
 		contentType : "application/json",
 		data : logInfo,
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("/BigBox/view/user.html");
+			$.mobile.navigate("/BigBoxApp/view/user.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -703,7 +703,7 @@ function logout() {
 		url : "http://127.0.0.1:3412/BigBoxServer/logout",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("http://127.0.0.1:8020/BigBox/");
+			$.mobile.navigate("/BigBoxApp/index.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -718,7 +718,7 @@ function account() {
 		url : "http://127.0.0.1:3412/BigBoxServer/account",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("../view/account.html");
+			$.mobile.navigate("http://127.0.0.1:8020/BigBoxApp/view/account/watching.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -768,7 +768,7 @@ function register() {
 		contentType : "application/json",
 		data : registerInfo,
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("/BigBox/view/signedUp.html");
+			$.mobile.navigate("/BigBoxApp/view/signedUp.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -783,20 +783,66 @@ function register() {
 /*===============================================================================================
  USER CHECK Function
  =============================================================================================*/
-function registerChecker() {
-	$.ajax({
+function registerChecker(num) {
+		if(num==0){
+			$.ajax({
 			url : "http://127.0.0.1:3412/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
 			console.log(data);
 			if (data != 'OK')
-				$.mobile.navigate("/BigBox/view/user.html");
+				$.mobile.navigate("/BigBoxApp/view/user.html");
 			},
 				error : function(data, textStatus, jqXHR) {
 			}
 			});
-}
+		}
+		else if(num == 5){
+				$.ajax({
+				url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+				contentType : "application/json",
+				success : function(data, textStatus, jqXHR) {
+				console.log("User is: " + data);
+				$(".user_header").empty;
+				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
+				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + data.fname+' '+data.lname + '!</h5> </a>');
+				},
+				error : function(data, textStatus, jqXHR) {
+				console.log("try again");
 
+				}
+				});
+		}
+		else{
+			
+			$.ajax({
+				url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+				contentType : "application/json",
+				success : function(data, textStatus, jqXHR) {
+					$(".user_header").empty;
+					$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" ><h5>Welcome! ' + data.fname + ' ' + data.lname + '</h5></a>');
+					$('.account').append('Account: ' + data.id);
+					if (data.isAdmin) {
+						$('#navbar_admin'+num).show();
+						$('#navbar_user'+num).hide();
+					} else {
+						$('#navbar_user'+num).show();
+						$('#navbar_admin'+num).hide();
+					}
+
+					$('#home').page();
+
+			},
+			error : function(data, textStatus, jqXHR) {
+			console.log("try again");
+
+				}
+			});
+	
+			
+		}
+			
+}
 /*===============================================================================================
  Helper Function
  =============================================================================================*/
