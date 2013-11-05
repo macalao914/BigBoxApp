@@ -138,9 +138,7 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 			"<div class='ui-li-aside'><fieldset data-role='controlgroup'>" +
 			"<legend><pre>Qty: </pre> </legend>" +
 			"<select name='qty' id='qty'>"+ options +
-			"</select></fieldset></div></li>"
-			
-			);
+			"</select></fieldset></div></li>");
 			
 
 //			"<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + 
@@ -149,9 +147,18 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 
 	} else {
 		var item = currentItem;
+		//var item = new cartItem(anItem.name, anItem.buyItNow, anItem.price, anItem.img, anItem.condition, anItem.hasBid, anItem.hasBid, 1, anItem.shippingPrice);
+		var options = "";
 		shippingTotal = parseFloat(item.shippingPrice);
 		subTotal = parseFloat(item.price);
-		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p></li>" + "<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + "<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><br>");
+		for(i=1;i<=5;i++){
+			options+= "<option value=' "+ i +"'>  "+ i + "  </option>";
+		}
+		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + 
+			"<div class='ui-li-aside'><fieldset data-role='controlgroup'>" +
+			"<legend><pre>Qty: </pre> </legend>" +
+			"<select name='qty' id='qty'>"+ options +
+			"</select></fieldset></div></li>");
 	}
 	total = shippingTotal + subTotal;
 
