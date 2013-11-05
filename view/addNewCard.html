@@ -11,16 +11,17 @@
 		<script src="appjs/app.js"></script>
 		<script src="raty/jquery.raty.min.js"></script>
 		<script src="raty/jquery.raty.js"></script>
-		<script>
-			$(document).ready(function() {
-				$('#star').raty();
-			});
-		</script>
 
 		
 	</head>
 
 	<body>
+		<div data-role="header" data-theme="c" data-position="fixed">				<a data-role="button" data-rel="back">Back</a>
+			<h1>Credit Card</h1>
+		</div>
+		<div style="text-align:center">
+			<h2>Enter credit card info</h2>
+		</div>
 		<form id="card-form">
 				<fieldset data-role="controlgroup">
 					<ul style="padding:0"><li><label for="cardnumber"> Card Number<input id="cardnumber" name="cardnumber" type="text" /></label></li><ul>
@@ -66,7 +67,7 @@
 				</fieldset>
 				
 				<div data-position="fixed" style="bottom:0;width:100%">
-				<a data-role="button" id="add-creditcard" onclick="AddCreditCard()">Save Card</a>
+				<a data-role="button" id="add-creditcard" onclick="AddCreditCard()" data-rel="back">Save Card</a>
 			</div>
 			</form>
 		</div>

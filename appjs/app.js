@@ -11,7 +11,7 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 			for (var i = 0; i < len; ++i) {
 				item = itemList[i];
 
-				list.append("<li><a onclick=GetItem(" + item.id + ")>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
+				list.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
 			}
 			list.listview("refresh");
 		},
@@ -132,26 +132,31 @@ $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
 
 //cart page
 $(document).on('pagebeforeshow', "#cart", function(event, ui) {
-
 	var len = cartList.length;
 	var cList = $("#cart-list");
 	var subtotal = $("#subtotal");
+	var page = $("#cart");
 	var sTotal = 0.00;
+	var itemsQty = 0;
 
 	cList.empty();
 	var item;
 	for (var i = 0; i < len; ++i) {
 		item = cartList[i];
-		cList.append("<li><a onclick=GetItem(" + item.id + ")>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" +
+		cList.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price+ "</p>" + 
+		"<p> Qty: " + item.qtyToPurchase+ "</p>" +
 		//				"<form class='ui-li-aside'><div data-role='fieldcontain'><label for='qty'>Qty:</label><br /><input onclick='#' style='width:35px' name='qty' id='qty' type='number' /></div></form>" +
-		"<a>A</a></a></li>");
-		sTotal += parseFloat(item.price);
+		"<a data-icon='delete' data-role='button' onclick='deleteCartItem(" + item.id + ")'></a></a></li>");
+		sTotal += parseFloat(item.price)*item.qtyToPurchase;
+		itemsQty += item.qtyToPurchase;
 	}
-
+	
 	subtotal.empty();
-	subtotal.append("<p>Subtotal (" + len + " items) <br />$" + sTotal.toFixed(2));
+	subtotal.append("<p>Subtotal (" + itemsQty + " items) <br />$" + sTotal.toFixed(2));
 	cList.listview("refresh");
+	
 });
+
 
 //checkout page
 $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
@@ -166,18 +171,49 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 	if (is_from_cart) {
 		var item;
 		var len = cartList.length;
+		var options = "";
+		
 		for ( i = 0; i < len; ++i) {
 			item = cartList[i];
+			//Usar el qty available que se va a crear en Item para comparar
+			//Por ahora hardwired 5
+			options = "";
+			for(j = 1; j <= 5; j++ ){
+				if(j==item.qtyToPurchase){
+					options+= "<option value=' "+ j +"' selected='selected'>  "+ j + "  </option>";
+				}
+				
+				else{
+					options+= "<option value=' "+ j +"'>  "+ j + "  </option>";
+				}
+			}
 			shippingTotal += parseFloat(item.shippingPrice);
 			subTotal += parseFloat(item.price);
-			items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p></li>" + "<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + "<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
+			items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + 
+			"<div class='ui-li-aside'><fieldset data-role='controlgroup'>" +
+			"<legend><pre>Qty: </pre> </legend>" +
+			"<select name='qty' id='qty'>"+ options +
+			"</select></fieldset></div></li>");
+			
+
+//			"<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + 
+//			"<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
 		}
 
 	} else {
 		var item = currentItem;
+		//var item = new cartItem(anItem.name, anItem.buyItNow, anItem.price, anItem.img, anItem.condition, anItem.hasBid, anItem.hasBid, 1, anItem.shippingPrice);
+		var options = "";
 		shippingTotal = parseFloat(item.shippingPrice);
 		subTotal = parseFloat(item.price);
-		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p></li>" + "<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + "<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><br>");
+		for(i=1;i<=5;i++){
+			options+= "<option value=' "+ i +"'>  "+ i + "  </option>";
+		}
+		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + 
+			"<div class='ui-li-aside'><fieldset data-role='controlgroup'>" +
+			"<legend><pre>Qty: </pre> </legend>" +
+			"<select name='qty' id='qty'>"+ options +
+			"</select></fieldset></div></li>");
 	}
 	total = shippingTotal + subTotal;
 
@@ -190,7 +226,7 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 	} else {
 		//todavia no ha seleccionado
 		shipTo.empty();
-		shipTo.append("<h5> Ship to <hr style='padding:0;margin:0'/></h5><a onClick='GetAddresses(true)'><p style='padding:0px 10px 10px 0; margin:0'>Select Address</p></a><hr style='margin:0'><br />");
+		shipTo.append("<h5> Ship to <hr style='padding:0;margin:0'/></h5><a onClick='GetAddresses(true)'><p style='padding:0px 10px 10px 0; margin:0'><strong>Select Address</strong></p></a><hr style='margin:0'><br />");
 	}
 
 	//Payment
@@ -199,22 +235,22 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 		payment.empty();
 		var cardNumberDisplay = new Array(currentCreditCard.cardnumber.length - 4 + 1).join('x') + currentCreditCard.cardnumber.slice(-4);
 		cardNumberDisplay = cardNumberDisplay.substring(cardNumberDisplay.length - 7);
-		payment.append("<h5> Payment <hr style='padding:0;margin:0' /></h5><a onClick='GetCreditCards(false)'>" + "<p style='padding:5px 10px 20px 0;margin:0'>" + currentCreditCard.holder_name + "<br />" + cardNumberDisplay + "</p></a>");
+		payment.append("<h5> Payment <hr style='padding:0;margin:0' /></h5><a onClick='GetCreditCards(false)'>" + "<p style='padding:5px 10px 20px 0;margin:0'><strong>Payment method:</strong></p>" + "<p>" + currentCreditCard.holder_name + "<br />" + cardNumberDisplay + "</p></a>");
 
 		//verificar si ya puso una un billing address
 		if (b_address_selected) {
 			//codigo para billing cuando ya selecciono uno
-			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:5px 10px 20px 0;margin:0'>Billing Address: <br>" + billing_address.name + "<br />" + billing_address.street + "<br />" + billing_address.city + ", " + billing_address.state + " " + billing_address.zip + " " + billing_address.country + "<br />" + billing_address.phone + "</p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px > Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
+			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:5px 10px 20px 0;margin:0'><strong>Billing Address:</strong> <br>" + billing_address.name + "<br />" + billing_address.street + "<br />" + billing_address.city + ", " + billing_address.state + " " + billing_address.zip + " " + billing_address.country + "<br />" + billing_address.phone + "</p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px > Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
 
 		} else {
 			//todavia no ha seleccionado una tajeta
-			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:10px 10px 10px 0; margin:0'>Select Billing Address</p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px>Price: $" + subTotal.toFixed(2) + "<br> Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
+			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:10px 10px 10px 0; margin:0'><strong>Select Billing Address</strong></p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px>Price: $" + subTotal.toFixed(2) + "<br> Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
 		}
 
 	} else {
 		//no ha puesto tarjeta
 		payment.empty();
-		payment.append("<h5> Payment <hr style='padding:0;margin:0'/></h5><a onClick='GetCreditCards()'><p style='padding:0px 10px 10px 0; margin:0'>Select Credit Card</p></a>");
+		payment.append("<h5> Payment <hr style='padding:0;margin:0'/></h5><a onClick='GetCreditCards()'><p style='padding:0px 10px 10px 0; margin:0'><strong>Select Credit Card</strong></p></a>");
 		payment.append("<hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px'>Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr>");
 
 	}
@@ -262,7 +298,7 @@ $(document).on('pagebeforeshow', "#ShippingOrPaymentSel", function(event, ui) {
 		head.append("Payment Method");
 		newSoP.append("<br /><li data-icon='plus'><a href='../view/addNewCard.html'><h5>Add new card</h5></a></li>");
 
-		//conseguir todas las direcciones del usuario y apendiarlas
+		//conseguir todas las tarjetas del usuario y apendiarlas
 		var lenC = creditcardList.length;
 		var aCredCard;
 		var cardNumberDisp;
@@ -293,7 +329,6 @@ $(document).on('pagebeforeshow', "#descriptionPage", function(event, ui) {
 
 	console.log(currentItem);
 	var detailsParaSpace = $(".detailsPara");
-	console.log("GOT HERE");
 	detailsParaSpace.empty();
 	detailsParaSpace.append("Name: " + currentItem.name + "<br/> Model: " + currentItem.model + "<br/> Year: " + currentItem.year + "<br/> Dimension: " + currentItem.dimension + "<br/> Weigth: " + currentItem.weigth + "<br/> Ship to:" + currentItem.shipTo + " <br/> Ship from: " + currentItem.shipFrom);
 
@@ -313,9 +348,10 @@ function ConverToJSON(formData) {
 
 //get a item by its id
 var currentItem = {};
-function GetItem(id) {
+function GetItem(id, display) {
 	$.mobile.loading("show");
 	$.ajax({
+		async : false,
 		url : "http://localhost:3412/BigBoxServer/items/" + id,
 		method : 'get',
 		contentType : "application/json",
@@ -323,7 +359,9 @@ function GetItem(id) {
 		success : function(data, textStatus, jqXHR) {
 			currentItem = data.item;
 			$.mobile.loading("hide");
-			$.mobile.navigate("../view/details.html");
+			if(display){
+				$.mobile.navigate("../view/details.html");
+			}
 		},
 		error : function(data, textStatus, jqXHR) {
 			console.log("textStatus: " + textStatus);
@@ -337,55 +375,7 @@ function GetItem(id) {
 	});
 }
 
-//arreglar la funcion para que detecte que es el cart de cierto usuario
-var cartList = {};
-function GetCart(show) {
-	console.log("cartList");
-	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/cart/",
-		contentType : "application/json",
-		dataType : "json",
-		success : function(data, textStatus, jqXHR) {
-			cartList = data.cart;
-			console.log(cartList);
-		},
-		error : function(data, textStatus, jqXHR) {
-			console.log("textStatus: " + textStatus);
-			alert("Data not found!");
-		}
-	});
-	$.mobile.loading("hide");
-	if (show) {
-		$.mobile.navigate("../view/cart.html");
-	}
 
-}
-
-//A-adir un item al carro
-function AddToCart() {
-	$.mobile.loading("show");
-	var newProdJSON = JSON.stringify(currentItem);
-	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/cart/",
-		method : 'post',
-		data : newProdJSON,
-		contentType : "application/json",
-		dataType : "json",
-		success : function(data, textStatus, jqXHR) {
-			$.mobile.loading("hide");
-			GetCart(true);
-		},
-		error : function(data, textStatus, jqXHR) {
-			console.log("textStatus: " + textStatus);
-			$.mobile.loading("hide");
-			if (data.status == 404) {
-				alert("Cart not found.");
-			} else {
-				alter("Internal Server Error.");
-			}
-		}
-	});
-}
 
 /*===============================================================================================
  Methods related to shipping and billing addresses
@@ -480,6 +470,96 @@ function GetAddresses(isShipping) {
 		}
 	});
 }
+
+/*===============================================================================================
+ Functions related Cart
+ =============================================================================================*/
+//arreglar la funcion para que detecte que es el cart de cierto usuario
+var cartList = {};
+function GetCart(show) {
+	console.log("cartList");
+	$.ajax({
+		async : false,
+		url : "http://localhost:3412/BigBoxServer/cart/",
+		contentType : "application/json",
+		dataType : "json",
+		success : function(data, textStatus, jqXHR) {
+			cartList = data.cart;
+			console.log(cartList);
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			alert("Data not found!");
+		}
+	});
+	$.mobile.loading("hide");
+	if (show) {
+		$.mobile.navigate("../view/cart.html");
+	}
+
+}
+
+//A-adir un item al carro
+function AddToCart() {
+	var id = currentItem.id;
+	$.mobile.loading("show");
+	var newProdJSON = JSON.stringify(currentItem);
+	$.ajax({
+		url : "http://localhost:3412/BigBoxServer/cart/" + id,
+		method : 'put',
+		data : newProdJSON,
+		contentType : "application/json",
+		dataType : "json",
+		success : function(data, textStatus, jqXHR) {
+			$.mobile.loading("hide");
+			GetCart(true);
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			$.mobile.loading("hide");
+			if (data.status == 404) {
+				alert("Cart not found.");
+			} else {
+				alert("Internal Server Error.");
+			}
+		}
+	});
+}
+
+function deleteCartItem(ItemId) {
+
+	var userConfirmation = confirm("Are you sure you want to remove this item?");
+	if (userConfirmation == false) {
+		return;
+	}
+	
+	var cartList = document.getElementById("cart-list");
+		
+	$.mobile.loading("show");
+	$.ajax({
+		async : false,
+		url : "http://localhost:3412/BigBoxServer/cart/" + ItemId,
+		method : 'delete',
+		contentType : "application/json",
+		dataType : "json",
+		success : function(data, textStatus, jqXHR){
+			$.mobile.loading("hide");
+			GetCart(false);
+			refreshPage();
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			$.mobile.loading("hide");
+			if (data.status == 404){
+				alert("Item not found.");
+			}
+			else {
+				alert("Internal Server Error.");
+			}
+		}
+	});
+}
+
 
 /*===============================================================================================
  Functions related to payment method
@@ -612,7 +692,7 @@ function getSubmitValue() {
 		contentType : "application/json",
 		dataType : "json",
 		success : function(data, textStatus, jqXHR) {
-			GetItem(currentItem.id);
+			GetItem(currentItem.id, true);
 			//refresh Current Item
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -652,7 +732,7 @@ function login() {
 		'password' : pass
 	});
 	$.ajax({
-		url : "http://127.0.0.1:3412/BigBoxServer/user",
+		url : "http://localhost:3412/BigBoxServer/user",
 		type : "post",
 		contentType : "application/json",
 		data : logInfo,
@@ -662,7 +742,7 @@ function login() {
 		},
 		error : function(data, textStatus, jqXHR) {
 
-			alert("Wrong username or password.")
+			alert("Wrong username or password.");
 			//$.mobile.navigate("../index.html");
 
 		}
@@ -673,7 +753,7 @@ function login() {
 function logout() {
 
 	$.ajax({
-		url : "http://127.0.0.1:3412/BigBoxServer/logout",
+		url : "http://localhost:3412/BigBoxServer/logout",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 			$.mobile.navigate("/BigBoxApp/index.html");
@@ -688,10 +768,10 @@ function logout() {
 
 function account() {
 	$.ajax({
-		url : "http://127.0.0.1:3412/BigBoxServer/account",
+		url : "http://localhost:3412/BigBoxServer/account",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("http://127.0.0.1:8020/BigBoxApp/view/account/watching.html");
+			$.mobile.navigate("http://localhost:8020/BigBoxApp/view/account/watching.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -736,7 +816,7 @@ function register() {
 	});
 
 	$.ajax({
-		url : "http://127.0.0.1:3412/BigBoxServer/register",
+		url : "http://localhost:3412/BigBoxServer/register",
 		type : "post",
 		contentType : "application/json",
 		data : registerInfo,
@@ -759,7 +839,7 @@ function register() {
 function registerChecker(num) {
 		if(num==0){
 			$.ajax({
-			url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+			url : "http://localhost:3412/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
 			console.log(data);
@@ -772,7 +852,7 @@ function registerChecker(num) {
 		}
 		else if(num == 5){
 				$.ajax({
-				url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+				url : "http://localhost:3412/BigBoxServer/verify/",
 				contentType : "application/json",
 				success : function(data, textStatus, jqXHR) {
 				console.log("User is: " + data);
@@ -789,7 +869,7 @@ function registerChecker(num) {
 		else{
 			
 			$.ajax({
-				url : "http://127.0.0.1:3412/BigBoxServer/verify/",
+				url : "http://localhost:3412/BigBoxServer/verify/",
 				contentType : "application/json",
 				success : function(data, textStatus, jqXHR) {
 					$(".user_header").empty;
@@ -815,4 +895,17 @@ function registerChecker(num) {
 			
 		}
 			
+}
+/*===============================================================================================
+ Helper Function
+ =============================================================================================*/
+function refreshPage(){
+	$.mobile.changePage(
+		window.location.href,
+		{
+		allowSamePageTransition	: true,
+		transition			    : 'none',
+		showLoadMsg				: false,
+		reloadPage 				: true
+	});
 }
