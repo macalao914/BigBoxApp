@@ -10,6 +10,12 @@ Category.prototype.setSubCategory = function(subcategory){
 
 Category.prototype.getSubCategory = function(pos){
 	return this.subcategory[pos];
+	/*
+	 * for (e in this.subcategory) {
+    if (e.cname.localeCompare(name) == 0) {
+     	return e;   
+    }
+	 */
 };
 
 Category.prototype.showSubCategory = function(pos){
