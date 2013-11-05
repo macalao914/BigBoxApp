@@ -35,7 +35,7 @@ $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 			var item;
 			for (var i = 0; i < len; ++i) {
 				category = categoriesList[i];
-				list.append("<li><a href='results.html' >"+ category.cname +"</a></li>");
+				list.append("<li><a href='subcategories.html' >"+ category.cname +"</a></li>");
 			}
 			list.listview("refresh");
 			
@@ -46,6 +46,36 @@ $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 		}
 	});
 });
+
+$(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
+	$.ajax({
+		url : "http://localhost:3412/BigBoxServer/categories",
+		contentType : "application/json",
+		success : function(data, textStatus, jqXHR) {
+
+			var categoriesList = data.categories;
+			var len = categoriesList.length;
+			var list = $("#subcategoriesUl");
+			var category;
+			list.empty();
+			for (var i = 0; i < len; ++i) {
+				category = categoriesList[i];
+				alert(JSON.stringify(categoriesList[0]));
+				list.append("<li><a href='subcategories.html' >"+ category.cname +"</a></li>");
+			}
+			list.listview("refresh");
+			
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			alert("Data not found!");
+		}
+	});
+});
+
+
+
+
 
 //item view page
 $(document).on('pagebeforeshow', "#details", function(event, ui) {
@@ -617,7 +647,6 @@ function checkBid() {
 function login() {
 	var user = document.getElementById('username').value;
 	var pass = document.getElementById('password').value;
-
 	var logInfo = JSON.stringify({
 		'username' : user,
 		'password' : pass
