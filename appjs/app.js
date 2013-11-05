@@ -22,6 +22,31 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 	});
 });
 
+$(document).on('pagebeforeshow', "#categories", function(event, ui) {
+	$.ajax({
+		url : "http://localhost:3412/BigBoxServer/categories",
+		contentType : "application/json",
+		success : function(data, textStatus, jqXHR) {
+			
+			var categoriesList = data.categories;
+			var len = categoriesList.length;
+			var list = $("#categoriesUl");
+			list.empty();
+			var item;
+			for (var i = 0; i < len; ++i) {
+				category = categoriesList[i];
+				list.append("<li><a href='results.html' >"+ category.cname +"</a></li>");
+			}
+			list.listview("refresh");
+			
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			alert("Data not found!");
+		}
+	});
+});
+
 //item view page
 $(document).on('pagebeforeshow', "#details", function(event, ui) {
 	console.log("pageBeforeShow Details");
@@ -597,7 +622,6 @@ function login() {
 		'username' : user,
 		'password' : pass
 	});
-
 	$.ajax({
 		url : "http://127.0.0.1:3412/BigBoxServer/user",
 		type : "post",
@@ -605,10 +629,10 @@ function login() {
 		data : logInfo,
 		success : function(data, textStatus, jqXHR) {
 			$.mobile.navigate("/BigBoxApp/view/user.html");
-
+			//$.mobile.navigate("../view/user.html")
 		},
 		error : function(data, textStatus, jqXHR) {
-			console.log("try again");
+
 			alert("Wrong username or password.")
 			//$.mobile.navigate("../index.html");
 
