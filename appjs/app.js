@@ -93,9 +93,88 @@ $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 				
 				for (var i = 0; i < newCategory2.numbSub; i++) {
 					
-					list.append('<li><a onclick= GetCategory("") >' + newCategory2.getSubCategory(i).cname + '</a></li>');
+					list.append('<li><a onclick= GetSecondCategory("' + newCategory2.getSubCategory(i).cid + '") >' + newCategory2.getSubCategory(i).cname + '</a></li>');
 				}
 				
+				list.listview("refresh");
+				/*	
+				for (var i = 0; i < newCategory2.numbSub; i++) {
+				currentCategories.push(categoriesList[0].getSubCategory(cid).getSubCategory(i));
+				}
+				alert(1);
+				$.mobile.navigate("../view/subcategories.html");
+				*/
+
+				//Get root; and cast it
+				//rootNumbSub = newCategory.numbSub;
+				//Check number of root subcategory
+
+				//for (var i = 0; i < rootNumbSub; i++) {
+
+					//alert(newCategory.getSubCategory(i).cid);
+					//alert(JSON.stringify(newCategory.getSubCategory(i)));
+					//alert(newCategory.numbSub);
+					//list.append('<li><a onclick= GetCategory("' + newCategory.getSubCategory(i).cid + '") >' + newCategory.getSubCategory(i).cname + '</a></li>');
+				//}
+				//list.listview("refresh");
+				//alert(newCategory);
+				//alert(JSON.stringify(newCategory));
+				//alert(JSON.stringify(newCategory.subcategory));
+				//alert(newCategory.test());
+				//alert( newCategory instanceof Category);
+			});
+
+		},
+		error : function(data, textStatus, jqXHR) {
+			console.log("textStatus: " + textStatus);
+			alert("Data not found!");
+		}
+	});
+});
+
+$(document).on('pagebeforeshow', "#secondsubcategories", function(event, ui) {
+	$.ajax({
+		url : "http://localhost:3412/BigBoxServer/categories",
+		contentType : "application/json",
+		success : function(data, textStatus, jqXHR) {
+
+			$.getScript("/BigBoxApp/appjs/category.js", function() {
+				
+				//alert("Third Script loaded and executed.");
+				var categoriesList = data.categories;
+				
+				// Merge object2 into object1(cast)
+				var newCategory = new Category;
+				var newCategory2 = new Category;
+				var newCategory3 = new Category;
+				//alert("1");
+				$.extend(newCategory, categoriesList[0]);//Cast root
+				//alert(newCategory.showCurrentCategory());
+				
+				//alert("2");
+				newCategory = newCategory.getSubCategory(currentcid); //Get Selected subcategory
+				
+				$.extend(newCategory2, newCategory);//Cast second level
+				//alert(newCategory2.showCurrentCategory());
+				//alert(newCategory2 instanceof Category);
+				
+				//alert("3");
+				//alert(JSON.stringify(newCategory2.getSubCategory(0)));
+				
+				newCategory2 = newCategory2.getSubCategory(currentcid2);
+				//newCategory2 = newCategory2.getSubCategory(currentcid2); //Get Selected subcategory
+				//alert(newCategory2 instanceof Category);
+				$.extend(newCategory3, newCategory2);//Cast third level
+				//alert(newCategory3 instanceof Category);
+				 //alert("4");
+				var list = $("#secondsubcategoriesUl");
+				list.empty();
+				//alert("5");
+				for (var i = 0; i < newCategory3.numbSub; i++) {
+					
+					list.append('<li><a onclick= GetSecondCategory("' + newCategory3.getSubCategory(i).cid + '") >' + newCategory3.getSubCategory(i).cname + '</a></li>');
+				}
+				//alert("termine");
 				list.listview("refresh");
 				/*	
 				for (var i = 0; i < newCategory2.numbSub; i++) {
@@ -391,6 +470,11 @@ var currentcid;
 function GetCategory(cid){
 	currentcid = cid;
 	$.mobile.navigate("../view/subcategories.html");
+}
+var currentcid2;
+function GetSecondCategory(cid){
+	currentcid2 = cid;
+	$.mobile.navigate("../view/secondSubCategory.html");
 }
 //get a item by its id
 var currentItem = {};
