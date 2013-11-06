@@ -22,23 +22,43 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 	});
 });
 
+
 $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 	$.ajax({
 		url : "http://localhost:3412/BigBoxServer/categories",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			
-			var categoriesList = data.categories;
-			var len = categoriesList.length;
-			var list = $("#categoriesUl");
-			list.empty();
-			var item;
-			for (var i = 0; i < len; ++i) {
-				category = categoriesList[i];
-				list.append("<li><a href='subcategories.html' >"+ category.cname +"</a></li>");
-			}
-			list.listview("refresh");
-			
+
+			$.getScript("/BigBoxApp/appjs/category.js", function() {
+				//alert("Script loaded and executed.");
+
+				var categoriesList = data.categories;
+
+				// Merge object2 into object1(cast)
+				var newCategory = new Category;
+
+				var list = $("#categoriesUl");
+				list.empty();
+				$.extend(newCategory, categoriesList[0]);
+				//Get root; and cast it
+				rootNumbSub = newCategory.numbSub;
+				//Check number of root subcategory
+
+				for (var i = 0; i < rootNumbSub; i++) {
+
+					//alert(newCategory.getSubCategory(i).cid);
+					//alert(JSON.stringify(newCategory.getSubCategory(i)));
+					//alert(newCategory.numbSub);
+					list.append('<li><a onclick= GetCategory("' + newCategory.getSubCategory(i).cid + '") >' + newCategory.getSubCategory(i).cname + '</a></li>');
+				}
+				list.listview("refresh");
+				//alert(newCategory);
+				//alert(JSON.stringify(newCategory));
+				//alert(JSON.stringify(newCategory.subcategory));
+				//alert(newCategory.test());
+				//alert( newCategory instanceof Category);
+			});
+
 		},
 		error : function(data, textStatus, jqXHR) {
 			console.log("textStatus: " + textStatus);
@@ -46,6 +66,7 @@ $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 		}
 	});
 });
+
 
 $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 	$.ajax({
@@ -53,18 +74,56 @@ $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 
-			var categoriesList = data.categories;
-			var len = categoriesList.length;
-			var list = $("#subcategoriesUl");
-			var category;
-			list.empty();
-			for (var i = 0; i < len; ++i) {
-				category = categoriesList[i];
-				alert(JSON.stringify(categoriesList[0]));
-				list.append("<li><a href='subcategories.html' >"+ category.cname +"</a></li>");
-			}
-			list.listview("refresh");
-			
+			$.getScript("/BigBoxApp/appjs/category.js", function() {
+				
+				//alert("Second Script loaded and executed.");
+				var categoriesList = data.categories;
+				
+				// Merge object2 into object1(cast)
+				var newCategory = new Category;
+				var newCategory2 = new Category;
+				
+				$.extend(newCategory, categoriesList[0]);//Cast root
+				
+				newCategory = newCategory.getSubCategory(currentcid); //Get Selected subcategory
+				$.extend(newCategory2, newCategory);//Cast second level
+				 
+				var list = $("#subcategoriesUl");
+				list.empty();
+				
+				for (var i = 0; i < newCategory2.numbSub; i++) {
+					
+					list.append('<li><a onclick= GetCategory("") >' + newCategory2.getSubCategory(i).cname + '</a></li>');
+				}
+				
+				list.listview("refresh");
+				/*	
+				for (var i = 0; i < newCategory2.numbSub; i++) {
+				currentCategories.push(categoriesList[0].getSubCategory(cid).getSubCategory(i));
+				}
+				alert(1);
+				$.mobile.navigate("../view/subcategories.html");
+				*/
+
+				//Get root; and cast it
+				//rootNumbSub = newCategory.numbSub;
+				//Check number of root subcategory
+
+				//for (var i = 0; i < rootNumbSub; i++) {
+
+					//alert(newCategory.getSubCategory(i).cid);
+					//alert(JSON.stringify(newCategory.getSubCategory(i)));
+					//alert(newCategory.numbSub);
+					//list.append('<li><a onclick= GetCategory("' + newCategory.getSubCategory(i).cid + '") >' + newCategory.getSubCategory(i).cname + '</a></li>');
+				//}
+				//list.listview("refresh");
+				//alert(newCategory);
+				//alert(JSON.stringify(newCategory));
+				//alert(JSON.stringify(newCategory.subcategory));
+				//alert(newCategory.test());
+				//alert( newCategory instanceof Category);
+			});
+
 		},
 		error : function(data, textStatus, jqXHR) {
 			console.log("textStatus: " + textStatus);
@@ -72,10 +131,6 @@ $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 		}
 	});
 });
-
-
-
-
 
 //item view page
 $(document).on('pagebeforeshow', "#details", function(event, ui) {
@@ -94,23 +149,23 @@ $(document).on('pagebeforeshow', "#details", function(event, ui) {
 
 	var detailsPrice = $("#detailsPrice");
 	detailsPrice.empty();
-	detailsPrice.append(""+currentItem.price);
-	
+	detailsPrice.append("" + currentItem.price);
+
 	var detailsBid = $("#detailsBid");
 	detailsBid.empty();
-	detailsBid.append(""+currentItem.bid);
+	detailsBid.append("" + currentItem.bid);
 
 	var detailsShipFrom = $("#detailsShipFrom");
 	detailsShipFrom.empty();
-	detailsShipFrom.append(""+currentItem.shipFrom);
+	detailsShipFrom.append("" + currentItem.shipFrom);
 
 	var detailsShipTo = $("#detailsShipTo");
 	detailsShipTo.empty();
-	detailsShipTo.append(""+currentItem.shipTo);
+	detailsShipTo.append("" + currentItem.shipTo);
 
 	var detailsCondition = $("#detailsCondition");
 	detailsCondition.empty();
-	detailsCondition.append(""+currentItem.condition);
+	detailsCondition.append("" + currentItem.condition);
 });
 
 $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
@@ -122,7 +177,7 @@ $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
 
 	//var prodBidInfo = $("#imgSpace");
 	//prodBidInfo.empty();
-	$('#imgSpace').attr('src', "../image/"+ currentItem.img);
+	$('#imgSpace').attr('src', "../image/" + currentItem.img);
 	//prodBidInfo.append("<img src= '../image/" + currentItem.img + "class='ui-li-thumb'>");
 
 	var currentBid = $("#currentBid");
@@ -143,20 +198,18 @@ $(document).on('pagebeforeshow', "#cart", function(event, ui) {
 	var item;
 	for (var i = 0; i < len; ++i) {
 		item = cartList[i];
-		cList.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price+ "</p>" + 
-		"<p> Qty: " + item.qtyToPurchase+ "</p>" +
+		cList.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + "<p> Qty: " + item.qtyToPurchase + "</p>" +
 		//				"<form class='ui-li-aside'><div data-role='fieldcontain'><label for='qty'>Qty:</label><br /><input onclick='#' style='width:35px' name='qty' id='qty' type='number' /></div></form>" +
 		"<a data-icon='delete' data-role='button' onclick='deleteCartItem(" + item.id + ")'></a></a></li>");
-		sTotal += parseFloat(item.price)*item.qtyToPurchase;
+		sTotal += parseFloat(item.price) * item.qtyToPurchase;
 		itemsQty += item.qtyToPurchase;
 	}
-	
+
 	subtotal.empty();
 	subtotal.append("<p>Subtotal (" + itemsQty + " items) <br />$" + sTotal.toFixed(2));
 	cList.listview("refresh");
-	
-});
 
+});
 
 //checkout page
 $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
@@ -172,32 +225,25 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 		var item;
 		var len = cartList.length;
 		var options = "";
-		
+
 		for ( i = 0; i < len; ++i) {
 			item = cartList[i];
 			//Usar el qty available que se va a crear en Item para comparar
 			//Por ahora hardwired 5
 			options = "";
-			for(j = 1; j <= 5; j++ ){
-				if(j==item.qtyToPurchase){
-					options+= "<option value=' "+ j +"' selected='selected'>  "+ j + "  </option>";
-				}
-				
-				else{
-					options+= "<option value=' "+ j +"'>  "+ j + "  </option>";
+			for ( j = 1; j <= 5; j++) {
+				if (j == item.qtyToPurchase) {
+					options += "<option value=' " + j + "' selected='selected'>  " + j + "  </option>";
+				} else {
+					options += "<option value=' " + j + "'>  " + j + "  </option>";
 				}
 			}
 			shippingTotal += parseFloat(item.shippingPrice);
 			subTotal += parseFloat(item.price);
-			items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + 
-			"<div class='ui-li-aside'><fieldset data-role='controlgroup'>" +
-			"<legend><pre>Qty: </pre> </legend>" +
-			"<select name='qty' id='qty'>"+ options +
-			"</select></fieldset></div></li>");
-			
+			items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + "<div class='ui-li-aside'><fieldset data-role='controlgroup'>" + "<legend><pre>Qty: </pre> </legend>" + "<select name='qty' id='qty'>" + options + "</select></fieldset></div></li>");
 
-//			"<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" + 
-//			"<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
+			//			"<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" +
+			//			"<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
 		}
 
 	} else {
@@ -206,14 +252,10 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 		var options = "";
 		shippingTotal = parseFloat(item.shippingPrice);
 		subTotal = parseFloat(item.price);
-		for(i=1;i<=5;i++){
-			options+= "<option value=' "+ i +"'>  "+ i + "  </option>";
+		for ( i = 1; i <= 5; i++) {
+			options += "<option value=' " + i + "'>  " + i + "  </option>";
 		}
-		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + 
-			"<div class='ui-li-aside'><fieldset data-role='controlgroup'>" +
-			"<legend><pre>Qty: </pre> </legend>" +
-			"<select name='qty' id='qty'>"+ options +
-			"</select></fieldset></div></li>");
+		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + "<div class='ui-li-aside'><fieldset data-role='controlgroup'>" + "<legend><pre>Qty: </pre> </legend>" + "<select name='qty' id='qty'>" + options + "</select></fieldset></div></li>");
 	}
 	total = shippingTotal + subTotal;
 
@@ -345,7 +387,11 @@ function ConverToJSON(formData) {
 	});
 	return result;
 }
-
+var currentcid;
+function GetCategory(cid){
+	currentcid = cid;
+	$.mobile.navigate("../view/subcategories.html");
+}
 //get a item by its id
 var currentItem = {};
 function GetItem(id, display) {
@@ -359,7 +405,7 @@ function GetItem(id, display) {
 		success : function(data, textStatus, jqXHR) {
 			currentItem = data.item;
 			$.mobile.loading("hide");
-			if(display){
+			if (display) {
 				$.mobile.navigate("../view/details.html");
 			}
 		},
@@ -374,8 +420,6 @@ function GetItem(id, display) {
 		}
 	});
 }
-
-
 
 /*===============================================================================================
  Methods related to shipping and billing addresses
@@ -472,8 +516,8 @@ function GetAddresses(isShipping) {
 }
 
 /*===============================================================================================
- Functions related Cart
- =============================================================================================*/
+Functions related Cart
+=============================================================================================*/
 //arreglar la funcion para que detecte que es el cart de cierto usuario
 var cartList = {};
 function GetCart(show) {
@@ -532,9 +576,9 @@ function deleteCartItem(ItemId) {
 	if (userConfirmation == false) {
 		return;
 	}
-	
+
 	var cartList = document.getElementById("cart-list");
-		
+
 	$.mobile.loading("show");
 	$.ajax({
 		async : false,
@@ -542,7 +586,7 @@ function deleteCartItem(ItemId) {
 		method : 'delete',
 		contentType : "application/json",
 		dataType : "json",
-		success : function(data, textStatus, jqXHR){
+		success : function(data, textStatus, jqXHR) {
 			$.mobile.loading("hide");
 			GetCart(false);
 			refreshPage();
@@ -550,16 +594,14 @@ function deleteCartItem(ItemId) {
 		error : function(data, textStatus, jqXHR) {
 			console.log("textStatus: " + textStatus);
 			$.mobile.loading("hide");
-			if (data.status == 404){
+			if (data.status == 404) {
 				alert("Item not found.");
-			}
-			else {
+			} else {
 				alert("Internal Server Error.");
 			}
 		}
 	});
 }
-
 
 /*===============================================================================================
  Functions related to payment method
@@ -805,10 +847,10 @@ function register() {
 		'city' : city,
 		'state' : state,
 		'country' : country,
-		'zipcode':zipcode,
+		'zipcode' : zipcode,
 		'phone' : phone,
 		'new_username' : new_username,
-		'email':email,
+		'email' : email,
 		'new_password' : new_password,
 		'renter' : renter,
 		'question' : question,
@@ -837,75 +879,71 @@ function register() {
  USER CHECK Function
  =============================================================================================*/
 function registerChecker(num) {
-		if(num==0){
-			$.ajax({
+	if (num == 0) {
+		$.ajax({
 			url : "http://localhost:3412/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
-			console.log(data);
-			if (data != 'OK')
-				$.mobile.navigate("/BigBoxApp/view/user.html");
+				console.log(data);
+				if (data != 'OK')
+					$.mobile.navigate("/BigBoxApp/view/user.html");
 			},
-				error : function(data, textStatus, jqXHR) {
+			error : function(data, textStatus, jqXHR) {
 			}
-			});
-		}
-		else if(num == 5){
-				$.ajax({
-				url : "http://localhost:3412/BigBoxServer/verify/",
-				contentType : "application/json",
-				success : function(data, textStatus, jqXHR) {
+		});
+	} else if (num == 5) {
+		$.ajax({
+			url : "http://localhost:3412/BigBoxServer/verify/",
+			contentType : "application/json",
+			success : function(data, textStatus, jqXHR) {
 				console.log("User is: " + data);
-				$(".user_header").empty;
+				$(".user_header").empty
 				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
-				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + data.fname+' '+data.lname + '!</h5> </a>');
-				},
-				error : function(data, textStatus, jqXHR) {
+				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + data.fname + ' ' + data.lname + '!</h5> </a>');
+			},
+			error : function(data, textStatus, jqXHR) {
 				console.log("try again");
 
-				}
-				});
-		}
-		else{
-			
-			$.ajax({
-				url : "http://localhost:3412/BigBoxServer/verify/",
-				contentType : "application/json",
-				success : function(data, textStatus, jqXHR) {
-					$(".user_header").empty;
-					$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" ><h5>Welcome! ' + data.fname + ' ' + data.lname + '</h5></a>');
-					$('.account').append('Account: ' + data.id);
-					if (data.isAdmin) {
-						$('#navbar_admin'+num).show();
-						$('#navbar_user'+num).hide();
-					} else {
-						$('#navbar_user'+num).show();
-						$('#navbar_admin'+num).hide();
-					}
+			}
+		});
+	} else {
 
-					$('#home').page();
+		$.ajax({
+			url : "http://localhost:3412/BigBoxServer/verify/",
+			contentType : "application/json",
+			success : function(data, textStatus, jqXHR) {
+				$(".user_header").empty
+				$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" ><h5>Welcome! ' + data.fname + ' ' + data.lname + '</h5></a>');
+				$('.account').append('Account: ' + data.id);
+				if (data.isAdmin) {
+					$('#navbar_admin' + num).show();
+					$('#navbar_user' + num).hide();
+				} else {
+					$('#navbar_user' + num).show();
+					$('#navbar_admin' + num).hide();
+				}
+
+				$('#home').page();
 
 			},
 			error : function(data, textStatus, jqXHR) {
-			console.log("try again");
+				console.log("try again");
 
-				}
-			});
-	
-			
-		}
-			
+			}
+		});
+
+	}
+
 }
+
 /*===============================================================================================
  Helper Function
  =============================================================================================*/
-function refreshPage(){
-	$.mobile.changePage(
-		window.location.href,
-		{
-		allowSamePageTransition	: true,
-		transition			    : 'none',
-		showLoadMsg				: false,
-		reloadPage 				: true
+function refreshPage() {
+	$.mobile.changePage(window.location.href, {
+		allowSamePageTransition : true,
+		transition : 'none',
+		showLoadMsg : false,
+		reloadPage : true
 	});
 }

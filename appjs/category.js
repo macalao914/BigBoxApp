@@ -1,23 +1,23 @@
-function Category (name){
+var Category = function(name) {
 	this.cid = "";
 	this.cname = name;
+	this.numbSub = 0;
 	this.subcategory = new Array();
-}
-
-Category.prototype.setSubCategory = function(subcategory){
-	this.subcategory.push(new Category(subcategory));
-};
-
-Category.prototype.getSubCategory = function(pos){
-	return this.subcategory[pos];
-	/*
-	 * for (e in this.subcategory) {
-    if (e.cname.localeCompare(name) == 0) {
-     	return e;   
-    }
-	 */
-};
-
-Category.prototype.showSubCategory = function(pos){
-	return JSON.stringify(this.subcategory[pos]);
+	this.setSubCategory = function(subcategory) {
+		this.numbSub++;
+		this.subcategory.push(new Category(subcategory));
+		return this;
+	};
+	this.getSubCategory = function(pos) {
+		return this.subcategory[pos];
+	};
+	this.showSubCategory = function(pos) {
+		return JSON.stringify(this.subcategory);
+	};
+	this.showCurrentCategory = function() {
+		return JSON.stringify(this);
+	};
+	this.test = function(){
+		return "BLAH";
+	};
 };
