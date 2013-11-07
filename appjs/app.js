@@ -897,7 +897,7 @@ function account() {
 		url : "http://localhost:3412/BigBoxServer/account",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-			$.mobile.navigate("http://localhost:8020/BigBoxApp/view/account/watching.html");
+			$.mobile.navigate("/BigBoxApp/view/account/watching.html");
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -980,8 +980,8 @@ function registerChecker(num) {
 			url : "http://localhost:3412/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
-				console.log("User is: " + data);
-				$(".user_header").empty
+				console.log(data);
+				$(".user_header").empty;
 				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
 				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + data.fname + ' ' + data.lname + '!</h5> </a>');
 			},
