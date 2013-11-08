@@ -33,23 +33,29 @@ $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 				//alert("Script loaded and executed.");
 
 				var categoriesList = data.categories;
+				//alert(JSON.stringify(categoriesList));
+				//alert(JSON.stringify(categoriesList[0].cname));
+				//alert(categoriesList.length);
+				//alert(categoriesList[0].cname);
+				
 
 				// Merge object2 into object1(cast)
-				var newCategory = new Category;
+				//var newCategory = new Category;
 
 				var list = $("#categoriesUl");
 				list.empty();
-				$.extend(newCategory, categoriesList[0]);
+				//$.extend(newCategory, categoriesList[0]);
 				//Get root; and cast it
-				rootNumbSub = newCategory.numbSub;
+				//rootNumbSub = newCategory.numbSub;
 				//Check number of root subcategory
 
-				for (var i = 0; i < rootNumbSub; i++) {
+				for (var i = 0; i < categoriesList.length; i++) {
 
 					//alert(newCategory.getSubCategory(i).cid);
 					//alert(JSON.stringify(newCategory.getSubCategory(i)));
 					//alert(newCategory.numbSub);
-					list.append('<li><a onclick= GetCategory("' + newCategory.getSubCategory(i).cid + '") >' + newCategory.getSubCategory(i).cname + '</a></li>');
+					//list.append('<li><a onclick= GetCategory("' + newCategory.getSubCategory(i).cid + '") >' + newCategory.getSubCategory(i).cname + '</a></li>');
+					list.append('<li><a onclick= GetCategory("'+categoriesList[i].cid+'") >' + categoriesList[i].cname + '</a></li>');
 				}
 				list.listview("refresh");
 				//alert(newCategory);
@@ -70,33 +76,39 @@ $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 
 $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/categories",
+		url : "http://localhost:3412/BigBoxServer/subcategories/" + currentcid,
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-
-			$.getScript("/BigBoxApp/appjs/category.js", function() {
+				
+			//$.getScript("/BigBoxApp/appjs/category.js", function() {
 				
 				//alert("Second Script loaded and executed.");
 				var categoriesList = data.categories;
+				//alert("Im here");
+				//alert(JSON.stringify(categoriesList));
+				//alert(JSON.stringify(categoriesList[0].scname));
+				//alert(categoriesList.length);
+				//alert(categoriesList[0].scname);
+				
 				
 				// Merge object2 into object1(cast)
-				var newCategory = new Category;
-				var newCategory2 = new Category;
+				//var newCategory = new Category;
+				//var newCategory2 = new Category;
 				
-				$.extend(newCategory, categoriesList[0]);//Cast root
+				//$.extend(newCategory, categoriesList[0]);//Cast root
 				
-				newCategory = newCategory.getSubCategory(currentcid); //Get Selected subcategory
-				$.extend(newCategory2, newCategory);//Cast second level
+				//newCategory = newCategory.getSubCategory(currentcid); //Get Selected subcategory
+				//$.extend(newCategory2, newCategory);//Cast second level
 				 
 				var list = $("#subcategoriesUl");
 				list.empty();
 				
-				for (var i = 0; i < newCategory2.numbSub; i++) {
+				//for (var i = 0; i < newCategory2.numbSub; i++) {
 					
-					list.append('<li><a onclick= GetSecondCategory("' + newCategory2.getSubCategory(i).cid + '") >' + newCategory2.getSubCategory(i).cname + '</a></li>');
-				}
+				//	list.append('<li><a onclick= GetSecondCategory("' + newCategory2.getSubCategory(i).cid + '") >' + newCategory2.getSubCategory(i).cname + '</a></li>');
+				//}
 				
-				list.listview("refresh");
+				//list.listview("refresh");
 				/*	
 				for (var i = 0; i < newCategory2.numbSub; i++) {
 				currentCategories.push(categoriesList[0].getSubCategory(cid).getSubCategory(i));
@@ -109,20 +121,19 @@ $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 				//rootNumbSub = newCategory.numbSub;
 				//Check number of root subcategory
 
-				//for (var i = 0; i < rootNumbSub; i++) {
-
+				for (var i = 0; i < categoriesList.length; i++) {
 					//alert(newCategory.getSubCategory(i).cid);
 					//alert(JSON.stringify(newCategory.getSubCategory(i)));
 					//alert(newCategory.numbSub);
-					//list.append('<li><a onclick= GetCategory("' + newCategory.getSubCategory(i).cid + '") >' + newCategory.getSubCategory(i).cname + '</a></li>');
-				//}
-				//list.listview("refresh");
+					list.append('<li><a onclick= GetSecondCategory("'+categoriesList[i].subid+'") >' + categoriesList[i].scname + '</a></li>');
+				}
+				list.listview("refresh");
 				//alert(newCategory);
 				//alert(JSON.stringify(newCategory));
 				//alert(JSON.stringify(newCategory.subcategory));
 				//alert(newCategory.test());
 				//alert( newCategory instanceof Category);
-			});
+			//});
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -134,45 +145,54 @@ $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 
 $(document).on('pagebeforeshow', "#secondsubcategories", function(event, ui) {
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/categories",
+		
+		url : "http://localhost:3412/BigBoxServer/2subcategories/" + currentcid2,
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
-
-			$.getScript("/BigBoxApp/appjs/category.js", function() {
+			
+			//$.getScript("/BigBoxApp/appjs/category.js", function() {
 				
 				//alert("Third Script loaded and executed.");
 				var categoriesList = data.categories;
 				
+				//alert("Second fast");
+				//alert(JSON.stringify(categoriesList));
+				//alert(JSON.stringify(categoriesList[0].scname));
+				//alert(categoriesList.length);
+				//alert(categoriesList[0].scname);
+				
 				// Merge object2 into object1(cast)
-				var newCategory = new Category;
-				var newCategory2 = new Category;
-				var newCategory3 = new Category;
+				//var newCategory = new Category;
+				//var newCategory2 = new Category;
+				//var newCategory3 = new Category;
 				//alert("1");
-				$.extend(newCategory, categoriesList[0]);//Cast root
+				//$.extend(newCategory, categoriesList[0]);//Cast root
 				//alert(newCategory.showCurrentCategory());
 				
 				//alert("2");
-				newCategory = newCategory.getSubCategory(currentcid); //Get Selected subcategory
+				//newCategory = newCategory.getSubCategory(currentcid); //Get Selected subcategory
 				
-				$.extend(newCategory2, newCategory);//Cast second level
+				//$.extend(newCategory2, newCategory);//Cast second level
 				//alert(newCategory2.showCurrentCategory());
 				//alert(newCategory2 instanceof Category);
 				
 				//alert("3");
 				//alert(JSON.stringify(newCategory2.getSubCategory(0)));
 				
-				newCategory2 = newCategory2.getSubCategory(currentcid2);
+				//newCategory2 = newCategory2.getSubCategory(currentcid2);
 				//newCategory2 = newCategory2.getSubCategory(currentcid2); //Get Selected subcategory
 				//alert(newCategory2 instanceof Category);
-				$.extend(newCategory3, newCategory2);//Cast third level
+				//$.extend(newCategory3, newCategory2);//Cast third level
 				//alert(newCategory3 instanceof Category);
 				 //alert("4");
 				var list = $("#secondsubcategoriesUl");
 				list.empty();
 				//alert("5");
-				for (var i = 0; i < newCategory3.numbSub; i++) {
+				for (var i = 0; i < categoriesList.length; i++) {
 					
-					list.append('<li><a onclick= GetSecondCategory("' + newCategory3.getSubCategory(i).cid + '") >' + newCategory3.getSubCategory(i).cname + '</a></li>');
+					//list.append('<li><a onclick= GetSecondCategory("' + newCategory3.getSubCategory(i).cid + '") >' + newCategory3.getSubCategory(i).cname + '</a></li>');
+					list.append('<li><a href="../view/results.html" >' + categoriesList[i].sscname + '</a></li>');
+				
 				}
 				//alert("termine");
 				list.listview("refresh");
@@ -201,7 +221,7 @@ $(document).on('pagebeforeshow', "#secondsubcategories", function(event, ui) {
 				//alert(JSON.stringify(newCategory.subcategory));
 				//alert(newCategory.test());
 				//alert( newCategory instanceof Category);
-			});
+			//});
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -473,6 +493,7 @@ function GetCategory(cid){
 }
 var currentcid2;
 function GetSecondCategory(cid){
+	//alert("subid:"+cid);
 	currentcid2 = cid;
 	$.mobile.navigate("../view/secondSubCategory.html");
 }
