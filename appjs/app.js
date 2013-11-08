@@ -996,7 +996,7 @@ function registerChecker(num) {
 			url : "http://localhost:3412/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
-				$(".user_header").empty
+				$(".user_header").empty;
 				$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" ><h5>Welcome! ' + data.fname + ' ' + data.lname + '</h5></a>');
 				$('.account').append('Account: ' + data.id);
 				if (data.isAdmin) {
@@ -1020,6 +1020,16 @@ function registerChecker(num) {
 
 }
 
+function searchUser(e) {
+	var unicode = e.keyCode ? e.keyCode : e.charCode;
+	var searchValue = document.getElementsByName('searchValue')[0].value;
+	// Got the User Search Value;
+
+	//Check if Enter was received.
+	if (unicode == 13) {
+		
+	}
+}
 /*===============================================================================================
  Helper Function
  =============================================================================================*/
