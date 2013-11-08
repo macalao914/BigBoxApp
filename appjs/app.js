@@ -297,10 +297,11 @@ $(document).on('pagebeforeshow', "#cart", function(event, ui) {
 	var item;
 	for (var i = 0; i < len; ++i) {
 		item = cartList[i];
-		cList.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + "<p> Qty: " + item.qtyToPurchase + "</p>" +
+		cList.append("<li><a onclick=GetItem(" + item.i_id + ",true)>" + "<img src='../image/" + item.i_img + "'/>" + "<p id='infoCart'>" + 
+		item.i_name + "</p>" + "<p> $" + item.i_price + "</p>" + "<p> Qty: " + item.qtyToPurchase + "</p>" +
 		//				"<form class='ui-li-aside'><div data-role='fieldcontain'><label for='qty'>Qty:</label><br /><input onclick='#' style='width:35px' name='qty' id='qty' type='number' /></div></form>" +
 		"<a data-icon='delete' data-role='button' onclick='deleteCartItem(" + item.id + ")'></a></a></li>");
-		sTotal += parseFloat(item.price) * item.qtyToPurchase;
+		sTotal += parseFloat(item.i_price) * item.qtyToPurchase;
 		itemsQty += item.qtyToPurchase;
 	}
 
@@ -633,8 +634,10 @@ function GetCart(show) {
 		contentType : "application/json",
 		dataType : "json",
 		success : function(data, textStatus, jqXHR) {
+			
 			cartList = data.cart;
 			console.log(cartList);
+			
 		},
 		error : function(data, textStatus, jqXHR) {
 			console.log("textStatus: " + textStatus);
