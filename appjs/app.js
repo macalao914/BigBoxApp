@@ -4,6 +4,12 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 			var itemList = data.items;
+			
+			//alert(JSON.stringify(itemList));
+			//alert(JSON.stringify(itemList[0].i_name));
+			//alert(itemList.length);
+			//alert(itemList[0].i_name);
+				
 			var len = itemList.length;
 			var list = $("#items-list");
 			list.empty();
@@ -11,7 +17,7 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 			for (var i = 0; i < len; ++i) {
 				item = itemList[i];
 
-				list.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
+				list.append("<li><a onclick=GetItem(" + item.i_id  + ",true)>" + "<img src='../image/" + item.i_img + "'/>" + "<p id='info'>" + item.i_name + "</p>" + "<p class='ui-li-aside'> $" + item.i_price + "</p>" + "</a></li>");
 			}
 			list.listview("refresh");
 		},
@@ -236,35 +242,35 @@ $(document).on('pagebeforeshow', "#details", function(event, ui) {
 	console.log("pageBeforeShow Details");
 	var detailsHeader = $("#detailsHeader");
 	detailsHeader.empty();
-	detailsHeader.append(currentItem.name);
+	detailsHeader.append(currentItem[0].i_name);
 
 	var detailsImg = $("#details-image");
 	detailsImg.empty();
-	detailsImg.append("<img src='../image/" + currentItem.img + "'>");
+	detailsImg.append("<img src='../image/" + currentItem[0].i_img + "'>");
 
 	var detailsPara = $("#detailsPara");
 	detailsPara.empty();
-	detailsPara.append(currentItem.info);
+	detailsPara.append(currentItem[0].i_info);
 
 	var detailsPrice = $("#detailsPrice");
 	detailsPrice.empty();
-	detailsPrice.append("" + currentItem.price);
+	detailsPrice.append("" + currentItem[0].i_price);
 
 	var detailsBid = $("#detailsBid");
 	detailsBid.empty();
-	detailsBid.append("" + currentItem.bid);
+	detailsBid.append("" + currentItem[0].i_bid);
 
 	var detailsShipFrom = $("#detailsShipFrom");
 	detailsShipFrom.empty();
-	detailsShipFrom.append("" + currentItem.shipFrom);
+	detailsShipFrom.append("" + currentItem[0].i_shipfrom);
 
 	var detailsShipTo = $("#detailsShipTo");
 	detailsShipTo.empty();
-	detailsShipTo.append("" + currentItem.shipTo);
+	detailsShipTo.append("" + currentItem[0].i_shipto);
 
 	var detailsCondition = $("#detailsCondition");
 	detailsCondition.empty();
-	detailsCondition.append("" + currentItem.condition);
+	detailsCondition.append("" + currentItem[0].i_condition);
 });
 
 $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
@@ -466,12 +472,12 @@ $(document).on('pagebeforeshow', "#descriptionPage", function(event, ui) {
 
 	var prodDescSpace = $("#prodDesPara");
 	prodDescSpace.empty();
-	prodDescSpace.append("" + currentItem.info);
+	prodDescSpace.append("" + currentItem[0].i_info);
 
 	console.log(currentItem);
 	var detailsParaSpace = $(".detailsPara");
 	detailsParaSpace.empty();
-	detailsParaSpace.append("Name: " + currentItem.name + "<br/> Model: " + currentItem.model + "<br/> Year: " + currentItem.year + "<br/> Dimension: " + currentItem.dimension + "<br/> Weigth: " + currentItem.weigth + "<br/> Ship to:" + currentItem.shipTo + " <br/> Ship from: " + currentItem.shipFrom);
+	detailsParaSpace.append("Name: " + currentItem[0].i_name + "<br/> Model: " + currentItem[0].i_model + "<br/> Year: " + currentItem[0].i_year + "<br/> Dimension: " + currentItem[0].i_width+ "x"+ currentItem[0].i_length + "x"+ currentItem[0].i_heigth + "<br/> Weigth: " + currentItem[0].i_weigth + "<br/> Ship to:" + currentItem[0].i_shipto + " <br/> Ship from: " + currentItem[0].i_shipfrom);
 
 });
 
@@ -508,7 +514,12 @@ function GetItem(id, display) {
 		contentType : "application/json",
 		dataType : "json",
 		success : function(data, textStatus, jqXHR) {
-			currentItem = data.item;
+			currentItem = data.items;
+			//alert(JSON.stringify(currentItem));
+			//alert(JSON.stringify(currentItem));
+			//alert(JSON.stringify(currentItem[0].i_name));
+			//alert(currentItem.length);
+			//alert(currentItem[0].i_name);
 			$.mobile.loading("hide");
 			if (display) {
 				$.mobile.navigate("../view/details.html");
@@ -870,7 +881,7 @@ function checkBid() {
 /*===============================================================================================
  Login Functions
  =============================================================================================*/
-
+var currentUser;
 function login() {
 	var user = document.getElementById('username').value;
 	var pass = document.getElementById('password').value;
@@ -884,6 +895,9 @@ function login() {
 		contentType : "application/json",
 		data : logInfo,
 		success : function(data, textStatus, jqXHR) {
+			//alert(data.user);
+			currentUser = data.user;
+			//alert(currentUser);
 			$.mobile.navigate("/BigBoxApp/view/user.html");
 			//$.mobile.navigate("../view/user.html")
 		},
@@ -1002,9 +1016,10 @@ function registerChecker(num) {
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
 				console.log(data);
+				//alert(JSON.stringify(currentUser[0].u_fname));
 				$(".user_header").empty;
 				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
-				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + data.fname + ' ' + data.lname + '!</h5> </a>');
+				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + currentUser[0].u_fname + ' ' + currentUser[0].u_lname + '!</h5> </a>');
 			},
 			error : function(data, textStatus, jqXHR) {
 				console.log("try again");
