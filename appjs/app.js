@@ -309,6 +309,8 @@ $(document).on('pagebeforeshow', "#cart", function(event, ui) {
 
 	cList.empty();
 	var item;
+	
+	
 	for (var i = 0; i < len; ++i) {
 		item = cartList[i];
 		cList.append("<li><a onclick=GetItem(" + item.i_id + ",true)>" + "<img src='../image/" + item.i_img + "'/>" + "<p id='infoCart'>" + item.i_name + "</p>" + "<p> $" + item.i_price + "</p>" + "<p> Qty: " + item.qtyToPurchase + "</p>" +
@@ -316,6 +318,7 @@ $(document).on('pagebeforeshow', "#cart", function(event, ui) {
 		"<a data-icon='delete' data-role='button' onclick='deleteCartItem(" + item.id + ")'></a></a></li>");
 		sTotal += parseFloat(item.i_price) * item.qtyToPurchase;
 		itemsQty += item.qtyToPurchase;
+	
 	}
 
 	subtotal.empty();
@@ -341,8 +344,7 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 
 		for ( i = 0; i < len; ++i) {
 			item = cartList[i];
-			//Usar el qty available que se va a crear en Item para comparar
-			//Por ahora hardwired 5
+			
 			options = "";
 			for ( j = 1; j <= item.i_qtyavailable; j++) {
 				if (j == item.qtyToPurchase) {
@@ -362,14 +364,13 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 
 	} else {
 		var item = currentItem;
-		//var item = new cartItem(anItem.name, anItem.buyItNow, anItem.price, anItem.img, anItem.condition, anItem.hasBid, anItem.hasBid, 1, anItem.shippingPrice);
 		var options = "";
-		shippingTotal = parseFloat(item.shippingPrice);
-		subTotal = parseFloat(item.price);
-		for ( i = 1; i <= 5; i++) {
+		shippingTotal = parseFloat(item[0].i_shippingprice);
+		subTotal = parseFloat(item[0].i_price);
+		for ( i = 1; i <= item[0].i_qtyavailable; i++) {
 			options += "<option value=' " + i + "'>  " + i + "  </option>";
 		}
-		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + "<div class='ui-li-aside'><fieldset data-role='controlgroup'>" + "<legend><pre>Qty: </pre> </legend>" + "<select name='qty' id='qty'>" + options + "</select></fieldset></div></li>");
+		items_ship.append("<li>" + "<img src='../image/" + item[0].i_img + "'/>" + "<p id='infoCart'>" + item[0].i_name + "</p>" + "<p> $" + item[0].i_price + "</p>" + "<div class='ui-li-aside'><fieldset data-role='controlgroup'>" + "<legend><pre>Qty: </pre> </legend>" + "<select name='qty' id='qty'>" + options + "</select></fieldset></div></li>");
 	}
 	total = shippingTotal + subTotal;
 
@@ -420,7 +421,7 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 	items_ship_head.empty();
 	items_ship_head.append("<h5> Items and Shipping <hr style='padding:0;margin:0'/></h5>");
 
-	if (shipping_address == null || billing_address == null || paymentMethod == null) {
+	if (!s_address_selected || !payment_selected || !b_address_selected) {
 		$("#place-order").addClass("ui-disabled");
 	} else {
 		$("#place-order").addClass("ui-enabled");
@@ -666,6 +667,7 @@ function GetCart(show) {
 
 			cartList = data.cart;
 			console.log(cartList);
+				
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -674,8 +676,11 @@ function GetCart(show) {
 		}
 	});
 	$.mobile.loading("hide");
-	if (show) {
+	if (show && cartList != "") {
 		$.mobile.navigate("../view/cart.html");
+	}
+	else if(show && cartList ==""){
+		$.mobile.navigate("../view/emptyCart.html");
 	}
 
 }
@@ -924,6 +929,7 @@ function login() {
 		success : function(data, textStatus, jqXHR) {
 			//alert(data.user);
 			currentUser = data.user;
+			clearInfo();
 			//alert(currentUser);
 			$.mobile.navigate("/BigBoxApp/view/user.html");
 			//$.mobile.navigate("../view/user.html")
@@ -1044,7 +1050,7 @@ function registerChecker(num) {
 			success : function(data, textStatus, jqXHR) {
 				console.log(data);
 				//alert(JSON.stringify(currentUser[0].u_fname));
-				$(".user_header").empty
+				$(".user_header").empty;
 				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
 				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + currentUser[0].u_fname + ' ' + currentUser[0].u_lname + '!</h5> </a>');
 			},
@@ -1098,6 +1104,18 @@ function searchUser(e) {
  Order Functions
  =============================================================================================*/
 function placeOrder(){
+	
+	//Implementacion usando una tabla de la relacion item_order y qtyavailable != 0
+	//Esto implica que solo se va a utilizar un cart por usuario
+	if(is_from_cart){
+		//codigo insertar en la tabla item_order y update la tabla de item qtyavailable--;
+		//y luego eliminar el cart de la tabla cart, cart_items y donde aparezca delete from table where cart_id = id.
+		
+	}
+	else{
+		//codigo insertar en la tabla item_order y update la tabla de item qtyavailable--; sin usar el cart
+	}
+	
 	$.mobile.navigate("../view/orderSubmitted.html");
 }
 /*===============================================================================================
@@ -1111,3 +1129,8 @@ function refreshPage() {
 		reloadPage : true
 	});
 }
+ function clearInfo(){
+	s_address_selected = false;
+	b_address_selected = false;
+	payment_selected = false; 	
+ }
