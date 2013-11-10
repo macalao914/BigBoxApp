@@ -309,6 +309,8 @@ $(document).on('pagebeforeshow', "#cart", function(event, ui) {
 
 	cList.empty();
 	var item;
+	
+	
 	for (var i = 0; i < len; ++i) {
 		item = cartList[i];
 		cList.append("<li><a onclick=GetItem(" + item.i_id + ",true)>" + "<img src='../image/" + item.i_img + "'/>" + "<p id='infoCart'>" + item.i_name + "</p>" + "<p> $" + item.i_price + "</p>" + "<p> Qty: " + item.qtyToPurchase + "</p>" +
@@ -316,6 +318,7 @@ $(document).on('pagebeforeshow', "#cart", function(event, ui) {
 		"<a data-icon='delete' data-role='button' onclick='deleteCartItem(" + item.id + ")'></a></a></li>");
 		sTotal += parseFloat(item.i_price) * item.qtyToPurchase;
 		itemsQty += item.qtyToPurchase;
+	
 	}
 
 	subtotal.empty();
@@ -341,19 +344,19 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 
 		for ( i = 0; i < len; ++i) {
 			item = cartList[i];
-			//Usar el qty available que se va a crear en Item para comparar
-			//Por ahora hardwired 5
+			
 			options = "";
-			for ( j = 1; j <= 5; j++) {
+			for ( j = 1; j <= item.i_qtyavailable; j++) {
 				if (j == item.qtyToPurchase) {
 					options += "<option value=' " + j + "' selected='selected'>  " + j + "  </option>";
 				} else {
 					options += "<option value=' " + j + "'>  " + j + "  </option>";
 				}
 			}
-			shippingTotal += parseFloat(item.shippingPrice);
-			subTotal += parseFloat(item.price);
-			items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + "<div class='ui-li-aside'><fieldset data-role='controlgroup'>" + "<legend><pre>Qty: </pre> </legend>" + "<select name='qty' id='qty'>" + options + "</select></fieldset></div></li>");
+			shippingTotal += parseFloat(item.i_shippingprice);
+			subTotal += parseFloat(item.i_price);
+			items_ship.append("<li>" + "<img src='../image/" + item.i_img + "'/>" + "<p id='infoCart'>" + item.i_name + "</p>" + "<p> $" + item.i_price + 
+			"</p>" + "<div class='ui-li-aside'><fieldset data-role='controlgroup'>" + "<legend><pre>Qty: </pre> </legend>" + "<select name='qty' id='qty'>" + options + "</select></fieldset></div></li>");
 
 			//			"<li><a href='#addSelect'><p style='padding-top:10px'>Quantity 3</p></a></li>" +
 			//			"<li><a href='#shipSelect'><p style='padding-top:10px'>Shpping type <br> Estimated shipping time</p></li><hr style='padding:0; margin:0'>");
@@ -361,14 +364,13 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 
 	} else {
 		var item = currentItem;
-		//var item = new cartItem(anItem.name, anItem.buyItNow, anItem.price, anItem.img, anItem.condition, anItem.hasBid, anItem.hasBid, 1, anItem.shippingPrice);
 		var options = "";
-		shippingTotal = parseFloat(item.shippingPrice);
-		subTotal = parseFloat(item.price);
-		for ( i = 1; i <= 5; i++) {
+		shippingTotal = parseFloat(item[0].i_shippingprice);
+		subTotal = parseFloat(item[0].i_price);
+		for ( i = 1; i <= item[0].i_qtyavailable; i++) {
 			options += "<option value=' " + i + "'>  " + i + "  </option>";
 		}
-		items_ship.append("<li>" + "<img src='../image/" + item.img + "'/>" + "<p id='infoCart'>" + item.name + "</p>" + "<p> $" + item.price + "</p>" + "<div class='ui-li-aside'><fieldset data-role='controlgroup'>" + "<legend><pre>Qty: </pre> </legend>" + "<select name='qty' id='qty'>" + options + "</select></fieldset></div></li>");
+		items_ship.append("<li>" + "<img src='../image/" + item[0].i_img + "'/>" + "<p id='infoCart'>" + item[0].i_name + "</p>" + "<p> $" + item[0].i_price + "</p>" + "<div class='ui-li-aside'><fieldset data-role='controlgroup'>" + "<legend><pre>Qty: </pre> </legend>" + "<select name='qty' id='qty'>" + options + "</select></fieldset></div></li>");
 	}
 	total = shippingTotal + subTotal;
 
@@ -376,7 +378,8 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 	if (s_address_selected) {
 		//ya selecciono
 		shipTo.empty();
-		shipTo.append("<h5> Ship to <hr style='padding:0;margin:0' /></h5><a onClick='GetAddresses(true)'>" + "<p style='padding:5px 10px 20px 0;margin:0'> " + shipping_address.name + "<br />" + shipping_address.street + "<br />" + shipping_address.city + ", " + shipping_address.state + " " + shipping_address.zip + " " + shipping_address.country + "<br />" + shipping_address.phone + "</p></a><hr style='padding:0;margin:0'/><br />");
+		shipTo.append("<h5> Ship to <hr style='padding:0;margin:0' /></h5><a onClick='GetAddresses(true)'>" + "<p style='padding:5px 10px 20px 0;margin:0'> " + shipping_address[0].a_name + "<br />" + shipping_address[0].a_street + "<br />" + 
+		shipping_address[0].a_city + ", " + shipping_address[0].a_state + " " + shipping_address[0].a_zip + " " + shipping_address[0].a_country + "<br />" + shipping_address[0].a_phone + "</p></a><hr style='padding:0;margin:0'/><br />");
 
 	} else {
 		//todavia no ha seleccionado
@@ -388,18 +391,23 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 	if (payment_selected) {
 		//codigo cuando ya puso trajeta
 		payment.empty();
-		var cardNumberDisplay = new Array(currentCreditCard.cardnumber.length - 4 + 1).join('x') + currentCreditCard.cardnumber.slice(-4);
+		var cardNumberDisplay = new Array(currentCreditCard[0].cc_number.length - 4 + 1).join('x') + currentCreditCard[0].cc_number.slice(-4);
 		cardNumberDisplay = cardNumberDisplay.substring(cardNumberDisplay.length - 7);
-		payment.append("<h5> Payment <hr style='padding:0;margin:0' /></h5><a onClick='GetCreditCards(false)'>" + "<p style='padding:5px 10px 20px 0;margin:0'><strong>Payment method:</strong></p>" + "<p>" + currentCreditCard.holder_name + "<br />" + cardNumberDisplay + "</p></a>");
+		payment.append("<h5> Payment <hr style='padding:0;margin:0' /></h5><a onClick='GetCreditCards(false)'>" + 
+		"<p style='padding:5px 10px 0px 0'><strong>Payment method:</strong></p>" + "<p>" + currentCreditCard[0].cc_holdername + "<br />" + cardNumberDisplay + "</p></a>");
 
 		//verificar si ya puso una un billing address
 		if (b_address_selected) {
 			//codigo para billing cuando ya selecciono uno
-			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:5px 10px 20px 0;margin:0'><strong>Billing Address:</strong> <br>" + billing_address.name + "<br />" + billing_address.street + "<br />" + billing_address.city + ", " + billing_address.state + " " + billing_address.zip + " " + billing_address.country + "<br />" + billing_address.phone + "</p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px > Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
+			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:5px 10px 20px 0;margin:0'><strong>Billing Address:</strong> <br>" + billing_address[0].a_name + "<br />" + 
+			billing_address[0].a_street + "<br />" + billing_address[0].a_city + ", " + billing_address[0].a_state + " " + billing_address[0].a_zip + " " + 
+			billing_address[0].a_country + "<br />" + billing_address[0].a_phone + "</p></a>");  
+			payment.append("<hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px'>Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr>");
 
 		} else {
 			//todavia no ha seleccionado una tajeta
-			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:10px 10px 10px 0; margin:0'><strong>Select Billing Address</strong></p></a><hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px>Price: $" + subTotal.toFixed(2) + "<br> Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr/>");
+			payment.append("<hr style='margin:0'><a onClick='GetAddresses(false)'><p style='padding:10px 10px 10px 0; margin:0'><strong>Select Billing Address</strong></p></a>");  
+			payment.append("<hr style='padding:0;margin:0;border-top:dashed 1px'/><br /><p style='margin-bottom:0;padding-bottom:5px'>Price: $" + subTotal.toFixed(2) + "<br>Shipping: $" + shippingTotal.toFixed(2) + "<hr style='padding:0;margin:0;width:100px'/>Total: $" + total.toFixed(2) + "</p><hr>"); 
 		}
 
 	} else {
@@ -413,7 +421,7 @@ $(document).on('pagebeforeshow', "#checkout-page", function(event, ui) {
 	items_ship_head.empty();
 	items_ship_head.append("<h5> Items and Shipping <hr style='padding:0;margin:0'/></h5>");
 
-	if (shipping_address == {} || billing_address == null || paymentMethod == null) {
+	if (!s_address_selected || !payment_selected || !b_address_selected) {
 		$("#place-order").addClass("ui-disabled");
 	} else {
 		$("#place-order").addClass("ui-enabled");
@@ -443,7 +451,7 @@ $(document).on('pagebeforeshow', "#ShippingOrPaymentSel", function(event, ui) {
 		var anAddress;
 		for ( i = 0; i < len; ++i) {
 			anAddress = addressList[i];
-			savedSoP.append("<li><a onClick='GetAddress(" + anAddress.id + ")'>" + "<p>" + anAddress.name + "<br />" + anAddress.street + "<br />" + anAddress.city + ", " + anAddress.state + " " + anAddress.zip + " " + anAddress.country + "<br />" + anAddress.phone + "</p></a></li>");
+			savedSoP.append("<li><a onClick='GetAddress(" + anAddress.a_id + ")'>" + "<p>" + anAddress.a_name + "<br />" + anAddress.a_street + "<br />" + anAddress.a_city + ", " + anAddress.a_state + " " + anAddress.a_zip + " " + anAddress.a_country + "<br />" + anAddress.a_phone + "</p></a></li>");
 		}
 
 	} else {
@@ -459,9 +467,9 @@ $(document).on('pagebeforeshow', "#ShippingOrPaymentSel", function(event, ui) {
 		var cardNumberDisp;
 		for ( i = 0; i < lenC; ++i) {
 			aCredCard = creditcardList[i];
-			cardNumberDisp = new Array(aCredCard.cardnumber.length - 4 + 1).join('x') + aCredCard.cardnumber.slice(-4);
+			cardNumberDisp = new Array(aCredCard.cc_number.length - 4 + 1).join('x') + aCredCard.cc_number.slice(-4);
 			cardNumberDisp = cardNumberDisp.substring(cardNumberDisp.length - 7);
-			savedSoP.append("<li><a onClick='GetCreditCard(" + aCredCard.id + ")'>" + "<p>" + aCredCard.holder_name + "<br />" + cardNumberDisp + "<br />Exp. Date " + aCredCard.exp_month + "/" + aCredCard.exp_year + "</p></a></li>");
+			savedSoP.append("<li><a onClick='GetCreditCard(" + aCredCard.cc_number + ")'>" + "<p>" + aCredCard.cc_holdername + "<br />" + cardNumberDisp + "<br />Exp. Date " + aCredCard.cc_expmonth + "/" + aCredCard.cc_expyear + "</p></a></li>");
 		}
 
 	}
@@ -605,6 +613,7 @@ function GetAddress(id) {
 				shipping_address = data.address;
 				s_address_selected = true;
 			} else {
+				
 				billing_address = data.address;
 				b_address_selected = true;
 			}
@@ -658,6 +667,7 @@ function GetCart(show) {
 
 			cartList = data.cart;
 			console.log(cartList);
+				
 
 		},
 		error : function(data, textStatus, jqXHR) {
@@ -666,15 +676,19 @@ function GetCart(show) {
 		}
 	});
 	$.mobile.loading("hide");
-	if (show) {
+	if (show && cartList != "") {
 		$.mobile.navigate("../view/cart.html");
+	}
+	else if(show && cartList ==""){
+		$.mobile.navigate("../view/emptyCart.html");
 	}
 
 }
 
 //A-adir un item al carro
 function AddToCart() {
-	var id = currentItem.id;
+	//Comentado por fase 2.
+	/*var id = currentItem.id;
 	$.mobile.loading("show");
 	var newProdJSON = JSON.stringify(currentItem);
 	$.ajax({
@@ -697,10 +711,13 @@ function AddToCart() {
 			}
 		}
 	});
+	*/
+	GetCart(true);
 }
 
 function deleteCartItem(ItemId) {
-
+	//Comentado por fase 2
+	/*
 	var userConfirmation = confirm("Are you sure you want to remove this item?");
 	if (userConfirmation == false) {
 		return;
@@ -730,6 +747,8 @@ function deleteCartItem(ItemId) {
 			}
 		}
 	});
+	*/
+	
 }
 
 /*===============================================================================================
@@ -912,6 +931,7 @@ function login() {
 		success : function(data, textStatus, jqXHR) {
 			//alert(data.user);
 			currentUser = data.user;
+			clearInfo();
 			//alert(currentUser);
 			$.mobile.navigate("/BigBoxApp/view/user.html");
 			//$.mobile.navigate("../view/user.html")
@@ -1032,7 +1052,7 @@ function registerChecker(num) {
 			success : function(data, textStatus, jqXHR) {
 				console.log(data);
 				//alert(JSON.stringify(currentUser[0].u_fname));
-				$(".user_header").empty
+				$(".user_header").empty;
 				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
 				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + currentUser[0].u_fname + ' ' + currentUser[0].u_lname + '!</h5> </a>');
 			},
@@ -1083,6 +1103,24 @@ function searchUser(e) {
 }
 
 /*===============================================================================================
+ Order Functions
+ =============================================================================================*/
+function placeOrder(){
+	
+	//Implementacion usando una tabla de la relacion item_order y qtyavailable != 0
+	//Esto implica que solo se va a utilizar un cart por usuario
+	if(is_from_cart){
+		//codigo insertar en la tabla item_order y update la tabla de item qtyavailable--;
+		//y luego eliminar el cart de la tabla cart, cart_items y donde aparezca delete from table where cart_id = id.
+		
+	}
+	else{
+		//codigo insertar en la tabla item_order y update la tabla de item qtyavailable--; sin usar el cart
+	}
+	
+	$.mobile.navigate("../view/orderSubmitted.html");
+}
+/*===============================================================================================
  Helper Function
  =============================================================================================*/
 function refreshPage() {
@@ -1093,3 +1131,8 @@ function refreshPage() {
 		reloadPage : true
 	});
 }
+ function clearInfo(){
+	s_address_selected = false;
+	b_address_selected = false;
+	payment_selected = false; 	
+ }
