@@ -833,9 +833,11 @@ function displayunicode(e) {
 	var unicode = e.keyCode ? e.keyCode : e.charCode;
 	var searchValue = document.getElementsByName('searchValue')[0].value;
 	// Got the User Search Value;
+	
 
 	//Check if Enter was received.
 	if (unicode == 13) {
+		alert(searchValue);
 		$.mobile.navigate("../view/results.html");
 	}
 }
