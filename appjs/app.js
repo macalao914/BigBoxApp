@@ -816,6 +816,7 @@ function displayunicode(e) {
 	}
 }
 
+
 function getSubmitValue() {
 	var bidValue = document.getElementsByName('bidValue')[0].value;
 
@@ -879,7 +880,7 @@ function login() {
 		'password' : pass
 	});
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/user",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/user",
 		type : "post",
 		contentType : "application/json",
 		data : logInfo,
@@ -900,7 +901,7 @@ function login() {
 function logout() {
 
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/logout",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/logout",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 			$.mobile.navigate("/BigBoxApp/index.html");
@@ -915,7 +916,7 @@ function logout() {
 
 function account() {
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/account",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/account",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 			$.mobile.navigate("/BigBoxApp/view/account/watching.html");
@@ -986,7 +987,7 @@ function register() {
 function registerChecker(num) {
 	if (num == 0) {
 		$.ajax({
-			url : "http://localhost:3412/BigBoxServer/verify/",
+			url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
 				console.log(data);
@@ -998,13 +999,14 @@ function registerChecker(num) {
 		});
 	} else if (num == 5) {
 		$.ajax({
-			url : "http://localhost:3412/BigBoxServer/verify/",
+			url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
 				console.log(data);
 				$(".user_header").empty;
 				$(".user_header").append('<a href="" data-rel="page"  class="ui-btn-left"\
-				style="color: #FFFFFF" onclick="account()"><h5>Welcome ' + data.fname + ' ' + data.lname + '!</h5> </a>');
+				style="color: #FFFFFF" onclick="account()"><h5>Welcome\
+				 ' + data.rows[0].u_fname + ' ' + data.rows[0].u_lname + '!</h5> </a>');
 			},
 			error : function(data, textStatus, jqXHR) {
 				console.log("try again");
@@ -1014,13 +1016,16 @@ function registerChecker(num) {
 	} else {
 
 		$.ajax({
-			url : "http://localhost:3412/BigBoxServer/verify/",
+			url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/verify/",
 			contentType : "application/json",
 			success : function(data, textStatus, jqXHR) {
 				$(".user_header").empty;
-				$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page"  class="ui-btn-left"style="color: #FFFFFF" ><h5>Welcome! ' + data.fname + ' ' + data.lname + '</h5></a>');
-				$('.account').append('Account: ' + data.id);
-				if (data.isAdmin) {
+				$(".user_header").append('<a href="/BigBoxApp/view/account/watching.html" data-rel="page" \
+				class="ui-btn-left"style="color: #FFFFFF" ><h5>Welcome! \
+				' + data.rows[0].u_fname + ' ' + data.rows[0].u_lname  + '</h5></a>');
+				
+				$('.account').append('Account: ' + data.rows[0].u_id);
+				if (data.rows[0].u_admin) {
 					$('#navbar_admin' + num).show();
 					$('#navbar_user' + num).hide();
 				} else {
@@ -1041,16 +1046,218 @@ function registerChecker(num) {
 
 }
 
-function searchUser(e) {
+
+function searchUser(e, page) {
 	var unicode = e.keyCode ? e.keyCode : e.charCode;
-	var searchValue = document.getElementsByName('searchValue')[0].value;
-	// Got the User Search Value;
+	var searchValue = JSON.stringify({
+		'value' : '%' + document.getElementsByName('searchValue')[0].value + '%'
+	});
 
 	//Check if Enter was received.
 	if (unicode == 13) {
-		
+		if (page == 1) {
+			displayAdminResult(searchValue);
+		}
+		else if(page==2){
+			displayUsersRemove(searchValue);
+			
+		}
 	}
 }
+
+
+function displayAdminResult(searchValue) {
+
+	$(document).on('pagebeforeshow', "#adminResult", function(event, ui) {
+
+		$.ajax({
+			url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/searchUser/",
+			type : "post",
+			contentType : "application/json",
+			data : searchValue,
+			success : function(data, textStatus, jqXHR) {
+
+				var list = $("#adminResultList");
+				document.getElementById("adminResultList").innerHTML = "";
+				console.log("Empty");
+				console.log(data);
+
+				if (data.rows.length == 0)
+					list.append('<p>No Matches, please try again.</p>');
+				else
+					for (var i = 0; i < data.rows.length; i++) {
+						var isAdmin = "No";
+						if (data.rows[i].u_admin)
+							isAdmin = "Yes";
+						var username = 'onclick="updateAdmin(\'' + data.rows[i].u_username + '\',' + data.rows[i].u_admin + ')"';
+						console.log(username);
+						list.append('<li><a href="" ' + username + '>Name: ' + data.rows[i].u_fname + ' ' + data.rows[i].u_lname + ', Username: ' + data.rows[i].u_username + ', Administrator Access: ' + isAdmin + ' Click to change access.</a></li>');
+
+					}
+
+				list.listview().listview("refresh");
+			},
+			error : function(data, textStatus, jqXHR) {
+
+			}
+		});
+
+	});
+
+	$.mobile.navigate("/BigBoxApp/view/account/adminResult.html");
+}
+
+function displayUsersRemove(searchValue){
+	
+	$(document).on('pagebeforeshow', "#removeUserResult", function(event, ui) {
+
+		$.ajax({
+			url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/searchUser/",
+			type : "post",
+			contentType : "application/json",
+			data : searchValue,
+			success : function(data, textStatus, jqXHR) {
+
+				var list = $("#removeUsersResultList");
+				document.getElementById("removeUsersResultList").innerHTML = "";
+				console.log("Empty");
+				console.log(data);
+
+				if (data.rows.length == 0)
+					list.append('<p>No Matches, please try again.</p>');
+				else
+					for (var i = 0; i < data.rows.length; i++) {
+						var isAdmin = "No";
+						if (data.rows[i].u_admin)
+							isAdmin = "Yes";
+						var username = 'onclick="confirmUserRemoval(\''+data.rows[i].u_username+'\',1)"';
+						console.log(username);
+						list.append('<li><a href="" ' + username + '>Name: ' + data.rows[i].u_fname + ' ' + data.rows[i].u_lname + ', Username: ' + data.rows[i].u_username + ', Administrator Access: ' + isAdmin + ' Click to remove user.</a></li>');
+
+					}
+
+				list.listview().listview("refresh");
+			},
+			error : function(data, textStatus, jqXHR) {
+
+			}
+		});
+
+	});
+
+	$.mobile.navigate("/BigBoxApp/view/account/removeUsers.html");
+	
+}
+
+
+
+function updateAdmin(username,isAdmin){
+	
+	var json = JSON.stringify({
+		'username':username,
+		'isAdmin': isAdmin
+	});
+	
+
+	$.ajax({
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/updateAdmin/",
+		contentType : "application/json",
+		type : "put",
+		data : json,
+		success : function(data, textStatus, jqXHR) {
+			var username = data.rows[0].u_username + "";
+			username = username.replace(/\s/g, "");
+			console.log(username+" testing");
+			if (data.rows[0].u_admin)
+				alert("User " + username + " now has administrator access.");
+			else
+				alert("User " + username + " administrator access has been revoked.");
+
+			$.mobile.navigate("/BigBoxApp/view/account/admin.html");
+
+		},
+		error : function(data, textStatus, jqXHR) {
+			alert("Cannot revoke administrator access from yourself.");
+		}
+	});
+
+}
+
+function confirmUserRemoval(username,confirmType){
+				
+			var user = username.replace(/\s/g, "");
+
+			if(confirmType==1){
+	
+				$(document).on('pagebeforeshow', "#confirmUserRemoval", function(event, ui) {
+					document.getElementById("confirmUserRemovalDiv").innerHTML="";
+					$("#confirmUserRemovalDiv").append('<div align="left">\
+					<p>Are you sure you want to remove '+user+'?</p>\
+					<p>This acction cannot be undone.</p>\
+					<input type="submit" onclick="removeUser(\''+user+'\')" data-inline="true" data-theme="b" value="Yes"/>\
+					<input type="button"  onclick="$.mobile.navigate(\'/BigBoxApp/view/account/admin.html\')"\
+					data-inline="true" data-theme="b" value="No"/>\
+					</div>');
+
+		
+				});
+				
+				$.mobile.navigate("/BigBoxApp/view/account/removeUserConfirm.html");
+			}
+			else if(confirmType==2){
+				console.log("confirm user removel with 2");
+				$(document).on('pagebeforeshow', "#removedUser", function(event, ui) {
+					document.getElementById("userRemoved").innerHTML="";
+					$("#userRemoved").append('<div align="left">\
+					<p>User '+user+' was removed.</p>\
+					<input type="button" onclick="$.mobile.navigate(\'/BigBoxApp/view/account/admin.html\');" \
+					data-inline="true" data-theme="b" value="Ok"/>\
+					</div>');
+		
+				});
+				
+				$.mobile.navigate("/BigBoxApp/view/account/removedUser.html");
+
+				
+			}
+			
+		
+			
+
+		
+
+
+}
+
+function removeUser(username){
+	
+		var json = JSON.stringify({
+		'username':username
+	});
+	
+		$.ajax({
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/removeUser/",
+		contentType : "application/json",
+		type : "delete",
+		data : json,
+		success : function(data, textStatus, jqXHR) {
+			
+			console.log("got here");
+			confirmUserRemoval(username,2);
+
+
+
+		},
+		error : function(data, textStatus, jqXHR) {
+			alert("This shouldn't happen.");
+		}
+	});
+	
+	
+	
+}
+
+
 /*===============================================================================================
  Helper Function
  =============================================================================================*/
