@@ -1,6 +1,6 @@
 $(document).on('pagebeforeshow', "#results", function(event, ui) {
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/items",
+		url : "http://quiet-meadow-5415.herokuapp.com//BigBoxServer/itemsearch/"+searchValue,
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 			var itemList = data.items;
@@ -16,6 +16,7 @@ $(document).on('pagebeforeshow', "#results", function(event, ui) {
 			var item;
 			for (var i = 0; i < len; ++i) {
 				item = itemList[i];
+				
 
 				list.append("<li><a onclick=GetItem(" + item.i_id + ",true)>" + "<img src='../image/" + item.i_img + "'/>" + "<p id='info'>" + item.i_name + "</p>" + "<p class='ui-li-aside'> $" + item.i_price + "</p>" + "</a></li>");
 			}
@@ -848,15 +849,16 @@ function prepareOrder(is_from_cart) {
 	$.mobile.navigate("../view/checkout.html");
 }
 
+var searchValue;
 function displayunicode(e) {
 	var unicode = e.keyCode ? e.keyCode : e.charCode;
-	var searchValue = document.getElementsByName('searchValue')[0].value;
+	searchValue = document.getElementsByName('searchValue')[0].value;
 	// Got the User Search Value;
 	
 
 	//Check if Enter was received.
 	if (unicode == 13) {
-		alert(searchValue);
+		
 		$.mobile.navigate("../view/results.html");
 	}
 }
