@@ -1064,6 +1064,9 @@ function searchUser(e, page) {
 			displayUsersRemove(searchValue);
 			
 		}
+		else if(page == 3){
+			displayUser(searchValue);
+		}
 	}
 }
 
@@ -1093,7 +1096,7 @@ function displayAdminResult(searchValue) {
 							isAdmin = "Yes";
 						var username = 'onclick="updateAdmin(\'' + data.rows[i].u_username + '\',' + data.rows[i].u_admin + ')"';
 						console.log(username);
-						list.append('<li><a href="" ' + username + '>Name: ' + data.rows[i].u_fname + ' ' + data.rows[i].u_lname + ', Username: ' + data.rows[i].u_username + ', Administrator Access: ' + isAdmin + ' Click to change access.</a></li>');
+						list.append('<li><a href="" ' + username + '>Name: ' + data.rows[i].u_fname + ' ' + data.rows[i].u_lname + ', Username: ' + data.rows[i].u_username + ', Administrator Access: ' + isAdmin + ' \tClick to change access.</a></li>');
 
 					}
 
@@ -1134,7 +1137,7 @@ function displayUsersRemove(searchValue){
 							isAdmin = "Yes";
 						var username = 'onclick="confirmUserRemoval(\''+data.rows[i].u_username+'\',1)"';
 						console.log(username);
-						list.append('<li><a href="" ' + username + '>Name: ' + data.rows[i].u_fname + ' ' + data.rows[i].u_lname + ', Username: ' + data.rows[i].u_username + ', Administrator Access: ' + isAdmin + ' Click to remove user.</a></li>');
+						list.append('<li><a href="" ' + username + '>Name: ' + data.rows[i].u_fname + ' ' + data.rows[i].u_lname + ', Username: ' + data.rows[i].u_username + ', Administrator Access: ' + isAdmin + ' \tClick to remove user.</a></li>');
 
 					}
 
@@ -1151,8 +1154,81 @@ function displayUsersRemove(searchValue){
 	
 }
 
+function displayUser(searchValue){
+	
+	$(document).on('pagebeforeshow', "#adminResult", function(event, ui) {
 
+		$.ajax({
+			url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/searchUser/",
+			type : "post",
+			contentType : "application/json",
+			data : searchValue,
+			success : function(data, textStatus, jqXHR) {
 
+				var list = $("#userResultList");
+				document.getElementById("userResultList").innerHTML = "";
+				console.log("Empty");
+				console.log(data);
+
+				if (data.rows.length == 0)
+					list.append('<p>No Matches, please try again.</p>');
+				else
+					for (var i = 0; i < data.rows.length; i++) {
+						var isAdmin = "No";
+						if (data.rows[i].u_admin)
+							isAdmin = "Yes";
+						var username = 'onclick="recoverPassword(\'' + data.rows[i].u_username + '\')"';
+						console.log(username);
+						list.append('<li><a href="" ' + username + '>Name: ' + data.rows[i].u_fname + ' ' + data.rows[i].u_lname + ', Username: ' + data.rows[i].u_username + ', Administrator Access: ' + isAdmin + ' \tClick check password.</a></li>');
+
+					}
+
+				list.listview().listview("refresh");
+			},
+			error : function(data, textStatus, jqXHR) {
+
+			}
+		});
+
+	});
+
+	$.mobile.navigate("/BigBoxApp/view/account/userResult.html");
+}
+
+function recoverPassword(username){
+	
+	var json = JSON.stringify({
+		'username':username
+	});
+	
+
+	$.ajax({
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/recoverPassword",
+		contentType : "application/json",
+		type : "post",
+		data : json,
+		success : function(data, textStatus, jqXHR) {
+			var username = data.rows[0].u_username + "";
+			username = username.replace(/\s/g, "");
+			
+			$(document).on('pagebeforeshow', "#passwordRecoverd", function(event, ui) {
+				
+				document.getElementById("showPassword").innerHTML="";
+				
+				$("#showPassword").append("<p>The password for user "+username+" is "+data.rows[0].u_password+"</p>");
+				
+			});
+		
+			$.mobile.navigate("/BigBoxApp/view/account/passwordRecoverd.html");
+
+		},
+		error : function(data, textStatus, jqXHR) {
+			alert("Internal server error. Please contact an administrator.");
+		}
+	});
+
+	
+}
 function updateAdmin(username,isAdmin){
 	
 	var json = JSON.stringify({
