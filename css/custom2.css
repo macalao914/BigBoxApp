@@ -1,0 +1,11 @@
+/*remove background color from search input*/
+.ui-listview-filter {
+    background : none;
+}
+/*remove the vertical padding, background gradient, and border for each list-item*/
+#dataPointList .ui-li {
+    padding    : 0px 0px;
+    background : none;
+    border     : none;
+}
+

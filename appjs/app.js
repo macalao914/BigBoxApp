@@ -1,32 +1,195 @@
 $(document).on('pagebeforeshow', "#results", function(event, ui) {
 	$.ajax({
-		url : "http://quiet-meadow-5415.herokuapp.com//BigBoxServer/itemsearch/"+searchValue,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/itemsearch/"+searchValue,
 		contentType : "application/json",
-		success : function(data, textStatus, jqXHR) {
-			var itemList = data.items;
-			var len = itemList.length;
-			var list = $("#items-list");
-			list.empty();
-			var item;
-			for (var i = 0; i < len; ++i) {
-				item = itemList[i];
-				
+	success : function(data, textStatus, jqXHR) {
+                        var itemList = data.items;
 
-				list.append("<li><a onclick=GetItem(" + item.id + ",true)>" + "<img src='../image/" + item.img + "'/>" + "<p id='info'>" + item.name + "</p>" + "<p class='ui-li-aside'> $" + item.price + "</p>" + "</a></li>");
-			}
-			list.listview("refresh");
-		},
-		error : function(data, textStatus, jqXHR) {
-			console.log("textStatus: " + textStatus);
-			alert("Data not found!");
-		}
+                        //alert(JSON.stringify(itemList));
+                        //alert(JSON.stringify(itemList[0].i_name));
+                        //alert(itemList.length);
+                        //alert(itemList[0].i_name);
+
+                        var len = itemList.length;
+                        var list = $("#items-list");
+                        list.empty();
+                        var item;
+                        for (var i = 0; i < len; ++i) {
+                                item = itemList[i];
+                                
+
+                                list.append("<li><a onclick=GetItem(" + item.i_id + ",true)>" + "<img src='../image/" + item.i_img + "'/>" + "<p id='info'>" + item.i_name + "</p>" + "<p class='ui-li-aside'> $" + item.i_price + "</p>" + "</a></li>");
+                        }
+                        list.listview("refresh");
+                },
+                error : function(data, textStatus, jqXHR) {
+                        console.log("textStatus: " + textStatus);
+                        alert("Data not found!");
+                }
 	});
 });
+
+$(document).on('pagebeforeshow', "#rmvcategories", function(event, ui) {
+	
+$.ajax({
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/rmvcategories",
+		contentType : "application/json",
+		success : function(data, textStatus, jqXHR) {
+			
+			var categoriesList = data.categories;
+			var subcategoriesList = data.subcategories;
+			var secsubcategoriesList = data.secsubcategories;
+			/*
+			alert(JSON.stringify(categoriesList));
+			alert(categoriesList.length);
+			alert(categoriesList[0].cid);
+			alert(categoriesList[0].cname);
+			
+			
+			alert(JSON.stringify(subcategoriesList));
+			alert(subcategoriesList.length);
+			
+			alert(JSON.stringify(secsubcategoriesList));
+			alert(secsubcategoriesList.length);
+			*/
+			//alert(categoriesList[0].cname);
+			var list = $("#dataPointList");
+			list.empty();
+			
+			for (var i = 0; i < categoriesList.length; i++) {
+				//alert();
+				
+				list.append('<li>\
+						<input type="checkbox"  id="checkbox-'+categoriesList[i].cid+'"/>\
+						<label for="checkbox-'+categoriesList[i].cid+'">'+ categoriesList[i].cname + '</label>\
+					</li>').listview('refresh');
+             // list.append('<li>' + categoriesList[i].cname + " ("+categoriesList[i].count+')</li>');
+		 	
+		 }
+				//list.listview("refresh");
+		},
+        error : function(data, textStatus, jqXHR) {
+  	      console.log("textStatus: " + textStatus);
+    	  alert("Data not found!");
+        }
+	});
+
+		
+});
+
+$(document).on('pagebeforeshow', "#changecategories", function(event, ui) {
+$.ajax({
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/rmvcategories",
+		contentType : "application/json",
+		success : function(data, textStatus, jqXHR) {
+			
+			var categoriesList = data.categories;
+			var subcategoriesList = data.subcategories;
+			var secsubcategoriesList = data.secsubcategories;
+			/*
+			alert(JSON.stringify(categoriesList));
+			alert(categoriesList.length);
+			alert(categoriesList[0].cid);
+			alert(categoriesList[0].cname);
+			
+			
+			alert(JSON.stringify(subcategoriesList));
+			alert(subcategoriesList.length);
+			
+			alert(JSON.stringify(secsubcategoriesList));
+			alert(secsubcategoriesList.length);
+			
+			//alert(categoriesList[0].cname);
+			*/
+			var list = $("#changecategorylist");
+			list.empty();
+			
+			for (var i = 0; i < categoriesList.length; i++) {
+				//alert();
+				
+				list.append('<li><a onclick= getButtonValue("' + categoriesList[i].cname + '") >'+categoriesList[i].cname+'<a data-icon="arrow-d" onclick= editSubCategory("' + categoriesList[i].cid + '") ></a></a></li></li>');
+             // list.append('<li>' + categoriesList[i].cname + " ("+categoriesList[i].count+')</li>');
+		 	
+		 }
+				list.listview("refresh");
+				
+		},
+        error : function(data, textStatus, jqXHR) {
+  	      console.log("textStatus: " + textStatus);
+    	  alert("Data not found!");
+        }
+	});
+
+});
+
+var currentCatId_editSub;
+function editSubCategory(cid){
+	currentCat_editSub = cid;
+	$.mobile.navigate("../view/changeSubcategories.html");
+	
+				
+}
+
+$(document).on('pagebeforeshow', "#changesubcategories", function(event, ui) {
+$.ajax({
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/rmvcategories",
+		contentType : "application/json",
+		success : function(data, textStatus, jqXHR) {
+			
+			var categoriesList = data.categories;
+			var subcategoriesList = data.subcategories;
+			var secsubcategoriesList = data.secsubcategories;
+			/*
+			alert(JSON.stringify(categoriesList));
+			alert(categoriesList.length);
+			alert(categoriesList[0].cid);
+			alert(categoriesList[0].cname);
+			
+			
+			alert(JSON.stringify(subcategoriesList));
+			alert(subcategoriesList.length);
+			
+			alert(JSON.stringify(secsubcategoriesList));
+			alert(secsubcategoriesList.length);
+			
+			//alert(categoriesList[0].cname);
+			*/
+			var list = $("#changesubcategorylist");
+			list.empty();
+			
+			for (var i = 0; i < subcategoriesList.length; i++) {
+				//alert();
+				if(currentCat_editSub == subcategoriesList[i].cid )
+				list.append('<li><a onclick= getButtonValue("' + subcategoriesList[i].scname + '") >'+subcategoriesList[i].scname+'<a data-icon="arrow-d" href=""></a></a></li></li>');
+             // list.append('<li>' + categoriesList[i].cname + " ("+categoriesList[i].count+')</li>');
+		 	
+		 }
+				list.listview("refresh");
+				
+		},
+        error : function(data, textStatus, jqXHR) {
+  	      console.log("textStatus: " + textStatus);
+    	  alert("Data not found!");
+        }
+	});
+
+});
+
+
+
+
+
+function getButtonValue(name){
+	
+	$( "input" ).val( name);
+				
+}
+
 
 
 $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/categories",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/categories",
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 
@@ -56,7 +219,10 @@ $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 					//alert(JSON.stringify(newCategory.getSubCategory(i)));
 					//alert(newCategory.numbSub);
 					//list.append('<li><a onclick= GetCategory("' + newCategory.getSubCategory(i).cid + '") >' + newCategory.getSubCategory(i).cname + '</a></li>');
-					list.append('<li><a onclick= GetCategory("'+categoriesList[i].cid+'") >' + categoriesList[i].cname + '</a></li>');
+					if(categoriesList[i].count == 0){
+                      list.append('<li><a href="../view/results.html"  >' + categoriesList[i].cname + '</a></li>');}
+                    else{
+                      list.append('<li><a onclick= GetCategory("' + categoriesList[i].cid + '") >' + categoriesList[i].cname + '</a></li>');}
 				}
 				list.listview("refresh");
 				//alert(newCategory);
@@ -77,7 +243,7 @@ $(document).on('pagebeforeshow', "#categories", function(event, ui) {
 
 $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/subcategories/" + currentcid,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/subcategories/" + currentcid,
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 				
@@ -125,9 +291,12 @@ $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 				for (var i = 0; i < categoriesList.length; i++) {
 					//alert(newCategory.getSubCategory(i).cid);
 					//alert(JSON.stringify(newCategory.getSubCategory(i)));
-					//alert(newCategory.numbSub);
-					list.append('<li><a onclick= GetSecondCategory("'+categoriesList[i].subid+'") >' + categoriesList[i].scname + '</a></li>');
-				}
+					//alert(newCategory.numbSub); 
+					if(categoriesList[i].count == 0)
+                        list.append('<li><a href="../view/results.html"  >' + categoriesList[i].scname + '</a></li>');
+                    else
+                        list.append('<li><a onclick= GetSecondCategory("' + categoriesList[i].subid + '") >' + categoriesList[i].scname + '</a></li>');
+                    }
 				list.listview("refresh");
 				//alert(newCategory);
 				//alert(JSON.stringify(newCategory));
@@ -147,7 +316,7 @@ $(document).on('pagebeforeshow', "#subcategories", function(event, ui) {
 $(document).on('pagebeforeshow', "#secondsubcategories", function(event, ui) {
 	$.ajax({
 		
-		url : "http://localhost:3412/BigBoxServer/2subcategories/" + currentcid2,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/2subcategories/" + currentcid2,
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
 			
@@ -234,38 +403,40 @@ $(document).on('pagebeforeshow', "#secondsubcategories", function(event, ui) {
 
 //item view page
 $(document).on('pagebeforeshow', "#details", function(event, ui) {
-	console.log("pageBeforeShow Details");
-	var detailsHeader = $("#detailsHeader");
-	detailsHeader.empty();
-	detailsHeader.append(currentItem.name);
+	 console.log("pageBeforeShow Details");
+	 //alert("1");
+        var detailsHeader = $("#detailsHeader");
+        detailsHeader.empty();
+        detailsHeader.append(currentItem[0].i_name);
+	//alert("2");
+        var detailsImg = $("#details-image");
+        detailsImg.empty();
+        detailsImg.append("<img src='../image/" + currentItem[0].i_img + "'>");
 
-	var detailsImg = $("#details-image");
-	detailsImg.empty();
-	detailsImg.append("<img src='../image/" + currentItem.img + "'>");
+        var detailsPara = $("#detailsPara");
+        detailsPara.empty();
+        detailsPara.append(currentItem[0].i_info);
 
-	var detailsPara = $("#detailsPara");
-	detailsPara.empty();
-	detailsPara.append(currentItem.info);
+        var detailsPrice = $("#detailsPrice");
+        detailsPrice.empty();
+        detailsPrice.append("" + currentItem[0].i_price);
 
-	var detailsPrice = $("#detailsPrice");
-	detailsPrice.empty();
-	detailsPrice.append("" + currentItem.price);
+        var detailsBid = $("#detailsBid");
+        detailsBid.empty();
+        detailsBid.append("" + currentItem[0].i_bid);
 
-	var detailsBid = $("#detailsBid");
-	detailsBid.empty();
-	detailsBid.append("" + currentItem.bid);
+        var detailsShipFrom = $("#detailsShipFrom");
+        detailsShipFrom.empty();
+        detailsShipFrom.append("" + currentItem[0].i_shipfrom);
 
-	var detailsShipFrom = $("#detailsShipFrom");
-	detailsShipFrom.empty();
-	detailsShipFrom.append("" + currentItem.shipFrom);
+        var detailsShipTo = $("#detailsShipTo");
+        detailsShipTo.empty();
+        detailsShipTo.append("" + currentItem[0].i_shipto);
 
-	var detailsShipTo = $("#detailsShipTo");
-	detailsShipTo.empty();
-	detailsShipTo.append("" + currentItem.shipTo);
-
-	var detailsCondition = $("#detailsCondition");
-	detailsCondition.empty();
-	detailsCondition.append("" + currentItem.condition);
+        var detailsCondition = $("#detailsCondition");
+        detailsCondition.empty();
+        detailsCondition.append("" + currentItem[0].i_condition);
+      //  alert();
 });
 
 $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
@@ -273,16 +444,16 @@ $(document).on('pagebeforeshow', "#bidPage", function(event, ui) {
 
 	var prodBidName = $("#prodBitName");
 	prodBidName.empty();
-	prodBidName.append(" " + currentItem.name);
+	prodBidName.append(" " + currentItem[0].i_name);
 
 	//var prodBidInfo = $("#imgSpace");
 	//prodBidInfo.empty();
-	$('#imgSpace').attr('src', "../image/" + currentItem.img);
+	$('#imgSpace').attr('src', "../image/" + currentItem[0].i_img);
 	//prodBidInfo.append("<img src= '../image/" + currentItem.img + "class='ui-li-thumb'>");
 
 	var currentBid = $("#currentBid");
 	currentBid.empty();
-	currentBid.append(" Current Bid &emsp; &emsp; &emsp;" + currentItem.bid);
+	currentBid.append(" Current Bid &emsp; &emsp; &emsp;" + currentItem[0].i_bid);
 });
 
 //cart page
@@ -467,12 +638,12 @@ $(document).on('pagebeforeshow', "#descriptionPage", function(event, ui) {
 
 	var prodDescSpace = $("#prodDesPara");
 	prodDescSpace.empty();
-	prodDescSpace.append("" + currentItem.info);
+	prodDescSpace.append("" + currentItem[0].i_info);
 
 	console.log(currentItem);
 	var detailsParaSpace = $(".detailsPara");
 	detailsParaSpace.empty();
-	detailsParaSpace.append("Name: " + currentItem.name + "<br/> Model: " + currentItem.model + "<br/> Year: " + currentItem.year + "<br/> Dimension: " + currentItem.dimension + "<br/> Weigth: " + currentItem.weigth + "<br/> Ship to:" + currentItem.shipTo + " <br/> Ship from: " + currentItem.shipFrom);
+	detailsParaSpace.append("Name: " + currentItem[0].i_name + "<br/> Model: " + currentItem[0].i_model + "<br/> Year: " + currentItem[0].i_year + "<br/> Dimension: "  + currentItem[0].i_width + "x" + currentItem[0].i_length + "x" + currentItem[0].i_heigth + "<br/> Weigth: " + currentItem[0].i_weigth + "<br/> Ship to:" + currentItem[0].i_shipto + " <br/> Ship from: " + currentItem[0].i_shipfrom);
 
 });
 
@@ -504,16 +675,15 @@ function GetItem(id, display) {
 	$.mobile.loading("show");
 	$.ajax({
 		async : false,
-		url : "http://localhost:3412/BigBoxServer/items/" + id,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/items/" + id,
 		method : 'get',
 		contentType : "application/json",
 		dataType : "json",
 		success : function(data, textStatus, jqXHR) {
-			currentItem = data.item;
+			currentItem = data.items;
+			//alert(currentItem);
 			$.mobile.loading("hide");
-			if (display) {
-				$.mobile.navigate("../view/details.html");
-			}
+			$.mobile.navigate("../view/details.html");
 		},
 		error : function(data, textStatus, jqXHR) {
 			console.log("textStatus: " + textStatus);
@@ -552,7 +722,7 @@ function AddAddress() {
 	console.log("New Address: " + JSON.stringify(newAddress));
 	var newAddressJSON = JSON.stringify(newAddress);
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/addresses",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/addresses",
 		method : 'post',
 		data : newAddressJSON,
 		contentType : "application/json",
@@ -574,7 +744,7 @@ function AddAddress() {
 function GetAddress(id) {
 	$.mobile.loading("show");
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/addresses/" + id,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/addresses/" + id,
 		method : 'get',
 		contentType : "application/json",
 		dataType : "json",
@@ -605,7 +775,7 @@ function GetAddress(id) {
 var addressList = new Array();
 function GetAddresses(isShipping) {
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/addresses",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/addresses",
 		method : 'get',
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
@@ -630,7 +800,7 @@ function GetCart(show) {
 	console.log("cartList");
 	$.ajax({
 		async : false,
-		url : "http://localhost:3412/BigBoxServer/cart/",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/cart/",
 		contentType : "application/json",
 		dataType : "json",
 		success : function(data, textStatus, jqXHR) {
@@ -655,7 +825,7 @@ function AddToCart() {
 	$.mobile.loading("show");
 	var newProdJSON = JSON.stringify(currentItem);
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/cart/" + id,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/cart/" + id,
 		method : 'put',
 		data : newProdJSON,
 		contentType : "application/json",
@@ -688,7 +858,7 @@ function deleteCartItem(ItemId) {
 	$.mobile.loading("show");
 	$.ajax({
 		async : false,
-		url : "http://localhost:3412/BigBoxServer/cart/" + ItemId,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/cart/" + ItemId,
 		method : 'delete',
 		contentType : "application/json",
 		dataType : "json",
@@ -723,7 +893,7 @@ function AddCreditCard() {
 	console.log("New Credit Card: " + JSON.stringify(newCreditCard));
 	var newCreditCardJSON = JSON.stringify(newCreditCard);
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/creditcards",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/creditcards",
 		method : 'post',
 		data : newCreditCardJSON,
 		contentType : "application/json",
@@ -746,7 +916,7 @@ var currentCreditCard = {};
 function GetCreditCard(id) {
 	$.mobile.loading("show");
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/creditcards/" + id,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/creditcards/" + id,
 		method : 'get',
 		contentType : "application/json",
 		dataType : "json",
@@ -773,7 +943,7 @@ function GetCreditCard(id) {
 var creditcardList = new Array();
 function GetCreditCards() {
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/creditcards",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/creditcards",
 		method : 'get',
 		contentType : "application/json",
 		success : function(data, textStatus, jqXHR) {
@@ -826,6 +996,8 @@ function getSubmitValue() {
 	if (userConfirmation == false) {
 		return;
 	}
+	alert("Not implemented in this phase");
+	$.mobile.navigate("../view/details.html");
 
 	/*
 	 var jsonData={"name":""+currentItem.name, "model":""+currentItem.model, "year":""+currentItem.year,"info":""+currentItem.info,"buyItNow":""+currentItem.buyItNow, "price":""+currentItem.price, "img":""+currentItem.img,
@@ -833,10 +1005,14 @@ function getSubmitValue() {
 	 "hasBid":""+currentItem.hasBid, "bid":""+currentItem.bid, "seller":""+currentItem.seller, "shippingPrice":""+currentItem.shippingPrice){
 
 	 var j = JSON.stringify(jsonData);*/
+	
+	
+	/*
+	
 	currentItem.bid = bidValue;
 	var newProdJSON = JSON.stringify(currentItem);
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/items/" + currentItem.id,
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/items/" + currentItem.id,
 		method : 'put',
 		data : newProdJSON,
 		contentType : "application/json",
@@ -855,15 +1031,16 @@ function getSubmitValue() {
 			}
 		}
 	});
-
+*/
 }
 
 function checkBid() {
 	var bidValue = document.getElementsByName('bidValue')[0].value;
+	
 	//Se le suma 0.50 para un bid aceptado- No implementado aun.
-	if (parseFloat(bidValue).toFixed(2) - parseFloat(currentItem.bid).toFixed(2) <= 0) {
+	if (parseFloat(bidValue).toFixed(2) - parseFloat(currentItem[0].i_bid).toFixed(2) <= 0) {
 		$('#submit').addClass('ui-disabled');
-	} else if (parseFloat(bidValue).toFixed(2) - parseFloat(currentItem.bid).toFixed(2) > 0) {
+	} else if (parseFloat(bidValue).toFixed(2) - parseFloat(currentItem[0].i_bid).toFixed(2) > 0) {
 		$('#submit').removeClass('ui-disabled');
 	} else {
 		$('#submit').addClass('ui-disabled');
@@ -966,7 +1143,7 @@ function register() {
 	});
 
 	$.ajax({
-		url : "http://localhost:3412/BigBoxServer/register",
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/register",
 		type : "post",
 		contentType : "application/json",
 		data : registerInfo,
@@ -1257,6 +1434,24 @@ function removeUser(username){
 	
 	
 	
+}
+
+function confirmChange(){
+	var userConfirmation = confirm("Are you sure? \n");
+	if (userConfirmation == false) {
+		return;
+	}
+	alert("Not implemented in this phase");
+	$.mobile.navigate("../view/account/admin.html");
+}
+
+function confirmDelete(){
+	var userConfirmation = confirm("Are you sure you want to destroy checked category and all his subcategories? \n");
+	if (userConfirmation == false) {
+		return;
+	}
+	alert("Not implemented in this phase");
+	$.mobile.navigate("../view/account/admin.html");
 }
 
 
