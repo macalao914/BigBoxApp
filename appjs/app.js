@@ -129,6 +129,13 @@ function editSubCategory(cid){
 	
 				
 }
+var currentCatId_editSub2;
+function editSecSubCategory(cid){
+	currentCatId_editSub2 = cid;
+	$.mobile.navigate("../view/changeSecSubcategories.html");
+	
+				
+}
 
 $(document).on('pagebeforeshow', "#changesubcategories", function(event, ui) {
 $.ajax({
@@ -160,7 +167,53 @@ $.ajax({
 			for (var i = 0; i < subcategoriesList.length; i++) {
 				//alert();
 				if(currentCat_editSub == subcategoriesList[i].cid )
-				list.append('<li><a onclick= getButtonValue("' + subcategoriesList[i].scname + '") >'+subcategoriesList[i].scname+'<a data-icon="arrow-d" href=""></a></a></li></li>');
+				list.append('<li><a onclick= getButtonValue("' + subcategoriesList[i].scname + '") >'+subcategoriesList[i].scname+'<a data-icon="arrow-d" onclick= editSecSubCategory("' + subcategoriesList[i].subid + '")></a></a></li></li>');
+             // list.append('<li>' + categoriesList[i].cname + " ("+categoriesList[i].count+')</li>');
+		 	
+		 }
+				list.listview("refresh");
+				
+		},
+        error : function(data, textStatus, jqXHR) {
+  	      console.log("textStatus: " + textStatus);
+    	  alert("Data not found!");
+        }
+	});
+
+});
+
+
+$(document).on('pagebeforeshow', "#changesecsubcategories", function(event, ui) {
+$.ajax({
+		url : "http://quiet-meadow-5415.herokuapp.com/BigBoxServer/rmvcategories",
+		contentType : "application/json",
+		success : function(data, textStatus, jqXHR) {
+			
+			var categoriesList = data.categories;
+			var subcategoriesList = data.subcategories;
+			var secsubcategoriesList = data.secsubcategories;
+			/*
+			alert(JSON.stringify(categoriesList));
+			alert(categoriesList.length);
+			alert(categoriesList[0].cid);
+			alert(categoriesList[0].cname);
+			
+			
+			alert(JSON.stringify(subcategoriesList));
+			alert(subcategoriesList.length);
+			
+			alert(JSON.stringify(secsubcategoriesList));
+			alert(secsubcategoriesList.length);
+			
+			//alert(categoriesList[0].cname);
+			*/
+			var list = $("#changesecsubcategorylist");
+			list.empty();
+			
+			for (var i = 0; i < secsubcategoriesList.length; i++) {
+				//alert();
+				if(currentCatId_editSub2 == secsubcategoriesList[i].subid )
+				list.append('<li><a onclick= getButtonValue("' + secsubcategoriesList[i].sscname + '") >'+secsubcategoriesList[i].sscname+'<a data-icon="arrow-d"  ></a></a></li></li>');
              // list.append('<li>' + categoriesList[i].cname + " ("+categoriesList[i].count+')</li>');
 		 	
 		 }
